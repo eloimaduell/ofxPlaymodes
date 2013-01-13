@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy
+END
+zexy.pd
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/zexy.pd
+END
+z_install.bat
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/z_install.bat
+END
+SConscript
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/SConscript
+END
+GnuGPL.txt
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/GnuGPL.txt
+END
+pd-zexy.info
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/pd-zexy.info
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/README.txt
+END
+BUGS.txt
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/BUGS.txt
+END

@@ -1,0 +1,611 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src
+END
+dfreq~.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/dfreq~.c
+END
+liststorage.c
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/liststorage.c
+END
+Make.config.in
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/Make.config.in
+END
+blockshuffle~.c
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/blockshuffle~.c
+END
+bootstrap.sh
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/bootstrap.sh
+END
+z~.c
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/z~.c
+END
+envrms~.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/envrms~.c
+END
+noish~.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/noish~.c
+END
+a2l.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/a2l.c
+END
+0x2e.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/0x2e.c
+END
+zexyconf.h.in
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/zexyconf.h.in
+END
+sigzero~.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sigzero~.c
+END
+0x3c0x7e.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/0x3c0x7e.c
+END
+unpack.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/unpack.c
+END
+zexySIMD.h
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/zexySIMD.h
+END
+configure.ac
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/configure.ac
+END
+list2symbol.c
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/list2symbol.c
+END
+0x3e0x7e.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/0x3e0x7e.c
+END
+0x260x260x7e.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/0x260x260x7e.c
+END
+msgfile.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/msgfile.c
+END
+minmax.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/minmax.c
+END
+sleepgrain.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sleepgrain.c
+END
+mavg.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/mavg.c
+END
+operating_system.c
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/operating_system.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/Makefile
+END
+.cvsignore
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/.cvsignore
+END
+sfplay.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sfplay.c
+END
+time.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/time.c
+END
+lpt.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/lpt.c
+END
+zexy.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/zexy.c
+END
+multiline~.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/multiline~.c
+END
+niagara.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/niagara.c
+END
+makesymbol.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/makesymbol.c
+END
+limiter~.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/limiter~.c
+END
+fifop.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/fifop.c
+END
+zexy.h
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/zexy.h
+END
+matchbox.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/matchbox.c
+END
+repack.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/repack.c
+END
+rawprint.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/rawprint.c
+END
+sfrecord.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sfrecord.c
+END
+list2int.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/list2int.c
+END
+strcmp.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/strcmp.c
+END
+swap~.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/swap~.c
+END
+lifop.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/lifop.c
+END
+pack~.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/pack~.c
+END
+list2lists.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/list2lists.c
+END
+Makefile.nt
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/Makefile.nt
+END
+relay.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/relay.c
+END
+date.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/date.c
+END
+makealias.sh
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/makealias.sh
+END
+repeat.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/repeat.c
+END
+multiplex~.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/multiplex~.c
+END
+0x3d0x3d0x7e.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/0x3d0x3d0x7e.c
+END
+tabread4~~.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/tabread4~~.c
+END
+tabset.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/tabset.c
+END
+multiplex.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/multiplex.c
+END
+sgn~.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sgn~.c
+END
+0x7c0x7c0x7e.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/0x7c0x7c0x7e.c
+END
+sort.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sort.c
+END
+packel.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/packel.c
+END
+tavg~.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/tavg~.c
+END
+abs~.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/abs~.c
+END
+sum.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/sum.c
+END
+pdf~.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/pdf~.c
+END
+index.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/index.c
+END
+step~.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/step~.c
+END
+wrap.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/wrap.c
+END
+avg~.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/avg~.c
+END
+freadln.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/freadln.c
+END
+prime.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/prime.c
+END
+listfind.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/listfind.c
+END
+pack.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/pack.c
+END
+unpack~.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/unpack~.c
+END
+length.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/length.c
+END
+blockmirror~.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/blockmirror~.c
+END
+symbol2list.c
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/symbol2list.c
+END
+makesource.sh
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/makesource.sh
+END
+absgn~.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/absgn~.c
+END
+strip_objects
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/strip_objects
+END
+demultiplex.c
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/demultiplex.c
+END
+multireceive.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/multireceive.c
+END
+drip.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/drip.c
+END
+quantize~.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/quantize~.c
+END
+lister.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/lister.c
+END
+urn.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/urn.c
+END
+alias
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/alias
+END
+regex.c
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/regex.c
+END
+noisi~.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/noisi~.c
+END
+dirac~.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/dirac~.c
+END
+tabminmax.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/tabminmax.c
+END
+blockswap~.c
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/blockswap~.c
+END
+acinclude.m4
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/acinclude.m4
+END
+z_zexy.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/z_zexy.c
+END
+demultiplex~.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/demultiplex~.c
+END
+fwriteln.c
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/fwriteln.c
+END
+winNT_portio.c
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/winNT_portio.c
+END
+glue.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/glue.c
+END
+atoi.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/atoi.c
+END
+route~.c
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/route~.c
+END
+tabdump.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/tabdump.c
+END
+z_zexy.h
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/pure-data/!svn/ver/13589/branches/pd-extended/0.42/externals/zexy/src/z_zexy.h
+END

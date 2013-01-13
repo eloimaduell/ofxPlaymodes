@@ -1,0 +1,21 @@
+K 10
+svn:ignore
+V 160
+*.d
+*.pd_linux
+*.dll
+*.pd_darwin
+*.l_i386
+*.l_ia64
+*.m_i486
+*.d_fat
+*.d_ppc
+aclocal.m4
+configure
+config.status
+config.log
+autom4te.cache
+Make.config
+zexyconf.h
+
+END

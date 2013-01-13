@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/pure-data/!svn/ver/12472/branches/pd-extended/0.42/pd/extra/expr~
+END
+LICENSE.txt
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/LICENSE.txt
+END
+vexp_if.c
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/vexp_if.c
+END
+vexp.c
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/vexp.c
+END
+fts_to_pd.h
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/fts_to_pd.h
+END
+vexp.h
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/vexp.h
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/README.txt
+END
+vexp_fun.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/expr~/vexp_fun.c
+END
+makefile
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/pure-data/!svn/ver/12472/branches/pd-extended/0.42/pd/extra/expr~/makefile
+END
