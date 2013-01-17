@@ -19,6 +19,13 @@ public:
 	virtual VideoFrame getNextVideoFrame()=0;
     virtual float getFps()=0;
     ofEvent<VideoFrame> newFrameEvent;
+	
+	int width;
+	int height;
+	void setWidth(int w);
+	void setHeigth(int h);
+	int getResolutionX();
+	int getResolutionY();
 };
 }
 #endif /* VIDEOSOURCE_H_ */

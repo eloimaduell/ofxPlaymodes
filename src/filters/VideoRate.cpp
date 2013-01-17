@@ -27,6 +27,13 @@ void VideoRate::setup(VideoSource & _source, float fps){
 	setFps(fps);
 	startThread(true,false);
 }
+	
+void VideoRate::removeListener()
+{
+	ofRemoveListener(source->newFrameEvent,this,&VideoRate::newVideoFrame);
+	stopThread();
+}
+	
 
 VideoFrame VideoRate::getNextVideoFrame(){
 	Poco::ScopedLock<ofMutex> lock(mutexFront);

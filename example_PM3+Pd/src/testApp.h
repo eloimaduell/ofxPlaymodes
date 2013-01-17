@@ -7,6 +7,7 @@
 #include "VideoRenderer.h"
 #include "VideoRate.h"
 #include "BasicVideoRenderer.h"
+#include "FileGrabber.h"
 #include "ofxGui.h"
 #include "ofxPd.h"
 
@@ -48,57 +49,99 @@ public:
 	void drawPdBuffer();
 	
 	
-	bool		showGUI;
-	bool		fullscreen;
 	
+	////////////////////
 	// ofxPlaymodes
 	////////////////
 	ofxPm::VideoGrabber			grabber;
 	ofxPm::VideoBuffer			vBuffer;
 	ofxPm::VideoHeader			vHeader;
-	ofxPm::BasicVideoRenderer	vRenderer1,vRenderer2;
+	ofxPm::BasicVideoRenderer	vRendererBuffer,vRendererHeader;
 	ofxPm::VideoRate			vRate;
+	int							durationInFrames;
 	ofVec2f						grabberResolution;
 	float						grabberAspectRatio;
 
 	// others
-	std::vector<ofVec2f> arrayForDrawAudio;
+	bool						showGUI;
+	bool						fullscreen;
+	std::vector<ofVec2f>		arrayForDrawAudio;
 
+	////////////////////
 	// ofxGUI
-	//////////
+	////////////////////
 	
-	ofxPanel gui;
-	ofxIntSlider fps;
-	ofxIntSlider delay;
-	ofxFloatSlider in;
-	ofxFloatSlider out;
-	ofxFloatSlider length;
-	ofxFloatSlider speed;
-	ofxFloatSlider feedBack;
-	ofxFloatSlider opacityOut;
-	ofxToggle rec;
-	ofxToggle play;
-	ofxToggle opacityEnvToggle;
-	ofxToggle fullGrain;
-	ofxIntSlider drawAudioResolution;
-	ofxToggle drawAudioToggle;
-	ofxIntSlider avSyncOffset;
+	ofxPanel		gui;
+	
+	ofxFloatSlider	delay;
+	ofxFloatSlider	in;
+	ofxFloatSlider	out;
+	ofxFloatSlider	length;
+	ofxFloatSlider	speed;
+	ofxFloatSlider	feedBack;
+	ofxFloatSlider	opacityOut;
+	ofxFloatSlider	opacityIn;
+	ofxFloatSlider	attack;
+	ofxFloatSlider	decay;	
+	ofxFloatSlider	dryWet;	
+	ofxToggle		rec;
+	ofxToggle		play;
+	ofxToggle		opacityEnvToggle;
+	ofxToggle		fullGrain;
+	ofxToggle		drawAudioToggle;
+	ofxToggle		grabberSettingsToggle;
+	ofxIntSlider	scratchFactor;
+	ofxIntSlider	drawAudioResolution;
+	ofxIntSlider	avSyncOffset;
+	ofxIntSlider	fps;
+	ofxLabel		audioLabel;
+	ofxLabel		presetLabel;
+	ofxLabel		controlLabel;
+	ofxLabel		setupLabel;
 
-	ofxIntSlider doppler;
-
+	// event changed float's
+	////////////////////
+	void inChanged(float &f);
+	void outChanged(float &f);
+	void lengthChanged(float &f);
+	void speedChanged(float &f);
+	void feedBackChanged(float &f);
+	void opacityOutChanged(float &f);
+	void opacityInChanged(float &f);
+	void attackChanged(float &f);
+	void decayChanged(float &f);
+	void delayChanged(float &f);
+	void dryWetChanged(float &f);
+	
+	// changed int's
+	////////////////////
+	void fpsChanged(int &i);
+	void avSyncOffsetChanged(int &i);
+	void scratchFactorChanged(int &i);
+	// changed bool's
+	////////////////////
+	void recChanged(bool &b);
+	void playChanged(bool &b);
+	void drawAudioChanged(bool &b);
+	void fullGrainChanged(bool &b);
+	void opacityEnvToggleChanged(bool &b);
+	void grabberSettingsToggleChanged(bool &b);
+	
 	float	oldRec;
 	float	oldPlay;
 	float	oldDelay;
 	float	oldSpeed;
-	float	oldDoppler;
+	float	oldScratch;
 	float	oldOpacityOut;
 	float	oldLength;
 	bool	oldFullGrain;
 	bool	oldOpacityEnvToggle;
 	
 	
+	////////////////////
 	// ofxPd
-	/////////
+	////////////////////
+	
 	int sampleRate;
 	// the puredata instance
 	ofxPd pd;
@@ -114,8 +157,15 @@ public:
 	void receiveFloat(const std::string& dest, float value);
 
 	
+	ofFbo		fboA;
+	ofFbo		fboFeedback;
+	ofImage		image;
+	ofPixels	pixelsToBuffer;
+	ofxPm::FileGrabber	videoGrabber;
+	int		grabberInput;
+
 	
-	ofImage image;
+	
 
 
 };

@@ -6,7 +6,7 @@
  */
 
 #include "VideoBuffer.h"
-
+#include "VideoHeader.h"
 namespace ofxPm{
 VideoBuffer::VideoBuffer(VideoSource & source, int size) {
 	setup(source,size);
@@ -21,20 +21,20 @@ VideoBuffer::VideoBuffer(){
 	realFps = 0;
 	framesOneSec = 0;
 	feedBackIn=0.0f;
-	pixelsIn.allocate(640,480,OF_PIXELS_RGB);	
-
+	pixelsVideoFrame.allocate(1024,768,OF_PIXELS_RGB);	
+	pixelsIn.allocate(1024,768,OF_PIXELS_RGB);	
 }
 
 
-void VideoBuffer::setup(VideoSource & source, int size){
-	this->source=&source;
+void VideoBuffer::setup(VideoSource & _source, int size){
+	this->source=&_source;
 	totalFrames=0;
 	maxSize = size;
 	resume();
 	microsOneSec=ofGetElapsedTimeMicros();
 	feedBackIn=0.0f;
-	pixelsIn.allocate(640,480,OF_PIXELS_RGB);	
-
+	if(!pixelsVideoFrame.isAllocated()) pixelsVideoFrame.allocate(source->getResolutionX(),source->getResolutionY(),OF_PIXELS_RGB);	
+	if(!pixelsIn.isAllocated()) pixelsIn.allocate(source->getResolutionX(),source->getResolutionX(),OF_PIXELS_RGB);	
 
 }
 
@@ -58,11 +58,15 @@ void VideoBuffer::newVideoFrame(VideoFrame & frame){
 
 	if(feedBackIn>0.0f) 
 	{
-		VideoFrame tempVideoFrame;
-		tempVideoFrame = sourceIn->getNextVideoFrame();
-		ofColor color;
+		pixelsVideoFrame = pixelsIn;
+		/*
+		 VideoFrame tempVideoFrame;
+		 tempVideoFrame = sourceIn->getVideoFrame(sourceIn->getCurrentPos());
+
+		 ofColor color;
 		ofColor colGrab;
 		ofColor colSrc;
+		
 		
 		for(int x=0;x<(640);x++)
 		{
@@ -76,36 +80,40 @@ void VideoBuffer::newVideoFrame(VideoFrame & frame){
 				
 				 
 				
-				/* 
-				int red = frame.getPixelsRef().getColor(x,y)[0];
-				int green = frame.getPixelsRef().getColor(x,y)[1];
-				int blue = frame.getPixelsRef().getColor(x,y)[2];
-				
-				int red2 = tempVideoFrame.getPixelsRef().getColor(x,y)[0];
-				int green2 = tempVideoFrame.getPixelsRef().getColor(x,y)[1];
-				int blue2 = tempVideoFrame.getPixelsRef().getColor(x,y)[2];
-								
-				if(int(red) + int(float(red2*feedBackIn)) > 255) color[0] = 255;
-				else color[0] = int(red) + int(float(red2*feedBackIn));
-				
-				if(int(green) + int(float(green2*feedBackIn)) > 255) color[1] = 255;
-				else color[1] = int(green) + int(float(green2*feedBackIn));
-
-				if(int(blue) + int(float(blue2*feedBackIn)) > 255) color[2] = 255;
-				else color[2] = int(blue) + int(float(blue2*feedBackIn));
-				
-				 pixelsIn.setColor(x,y,color);
+//				int red = frame.getPixelsRef().getColor(x,y)[0];
+//				int green = frame.getPixelsRef().getColor(x,y)[1];
+//				int blue = frame.getPixelsRef().getColor(x,y)[2];
+//				
+//				int red2 = tempVideoFrame.getPixelsRef().getColor(x,y)[0];
+//				int green2 = tempVideoFrame.getPixelsRef().getColor(x,y)[1];
+//				int blue2 = tempVideoFrame.getPixelsRef().getColor(x,y)[2];
+//								
+//				if(int(red) + int(float(red2*feedBackIn)) > 255) color[0] = 255;
+//				else color[0] = int(red) + int(float(red2*feedBackIn));
+//				
+//				if(int(green) + int(float(green2*feedBackIn)) > 255) color[1] = 255;
+//				else color[1] = int(green) + int(float(green2*feedBackIn));
+//
+//				if(int(blue) + int(float(blue2*feedBackIn)) > 255) color[2] = 255;
+//				else color[2] = int(blue) + int(float(blue2*feedBackIn));
+//				
+//				 pixelsIn.setColor(x,y,color);
 				 
-				 */
+				 
 				
 				
 			}
+		 
 		}
+		*/
+		//pixelsIn = tempVideoFrame.getPixelsRef();
+	
 	}
-	else pixelsIn = frame.getPixelsRef();
+	else pixelsVideoFrame = frame.getPixelsRef();
 	
 	
-	VideoFrame frameWithFeedback = VideoFrame::newVideoFrame(pixelsIn);
+	
+	VideoFrame frameWithFeedback = VideoFrame::newVideoFrame(pixelsVideoFrame);
 	timeMutex.lock();
 	frames.push_back(frameWithFeedback);	
 	//frames.push_back(frame);
@@ -260,6 +268,12 @@ void VideoBuffer::setInSource(VideoSource & s)
 void VideoBuffer::setFeedBack(float f)
 {
 	feedBackIn = f;
+}
+
+
+void VideoBuffer::setPixelsIn(ofPixels &p)
+{
+	pixelsIn = p;
 }
 
 }

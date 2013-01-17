@@ -41,6 +41,7 @@ void VideoHeader::setup(VideoBuffer & buffer){
     //newFrameEvent.init("Playmodes.VideoHeader.newFrame");
     this->buffer= &buffer;
     fps         = buffer.getFps();
+	this->buffer->clear();
     position    = buffer.size();
 	totalBufferSizeInMs = buffer.size() * (1000.0/fps);
     oneFrame    = (TimeDiff)round(1000000.0/(double)fps);
@@ -348,7 +349,7 @@ void VideoHeader::setDelayMs(double delayMs)
 	//int	outFrame = this->getOutFrames();
 	//int outAbsFrame = totalNumFr - outFrame;
 	//position = outAbsFrame-(delayToSet/oneFrame) ;
-	printf("VH::setDelayMs Position %f in frames\n",position);
+	//printf("VH::setDelayMs Position %f in frames\n",position);
 	this->delay = delayToSet;
 }
 //------------------------------------------------------
@@ -401,6 +402,7 @@ void VideoHeader::setInMs(double in)
 		{
 			this->in = in;
 		}
+		printf("in is %f out is %f length is %f\n",in,out,length);
 		// update the state of out 
 		this->out = this->in - length;
 	}
@@ -540,7 +542,10 @@ bool VideoHeader::isPlaying()
 //------------------------------------------------------
 void VideoHeader::setPlaying(bool isPlaying, double speed)
 {
-	this->speed = speed;
+}		
+//------------------------------------------------------
+void VideoHeader::setPlaying(bool isPlaying)
+{
 	if(isPlaying)
 	{
 		// if we're entering loop mode move position to in point
@@ -549,8 +554,8 @@ void VideoHeader::setPlaying(bool isPlaying, double speed)
 		int	loopFrame;
 		if(speed>0.0f) loopFrame = this->getInFrames();
 		else loopFrame = this->getOutFrames();
-//		if(speed>0.0f) loopFrame = int(double(buffer->size()-1)*(in));
-//		else loopFrame = int(double(buffer->size()-1)*(out));
+		//		if(speed>0.0f) loopFrame = int(double(buffer->size()-1)*(in));
+		//		else loopFrame = int(double(buffer->size()-1)*(out));
 		int	inAbsFrame  = buffer->getTotalFrames() -  loopFrame;
 		position = inAbsFrame; 
 	}
@@ -564,11 +569,6 @@ void VideoHeader::setPlaying(bool isPlaying, double speed)
 		TimeDiff oneFrame=(TimeDiff)(1000000.0/fps/1.0);		
 		delay = (actualFrame-1)*oneFrame;
 	}
-}		
-//------------------------------------------------------
-void VideoHeader::setPlaying(bool isPlaying)
-{
-	this->setPlaying(isPlaying,1.0);	
 }
 	
 

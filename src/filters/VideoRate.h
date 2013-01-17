@@ -17,7 +17,8 @@ public:
 	virtual ~VideoRate();
 
 	void setup(VideoSource & source, float fps=30);
-
+	void removeListener();
+	
     VideoFrame getNextVideoFrame();
 	void newVideoFrame(VideoFrame & frame);
     float getFps();

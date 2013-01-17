@@ -68,6 +68,7 @@ public:
 	// feed back
 	void setInSource(VideoSource & s);
 	void setFeedBack(float f);
+	void setPixelsIn(ofPixels &p);
 	
 protected:
     deque<VideoFrame> frames;
@@ -85,6 +86,7 @@ protected:
 	
 	VideoSource*	sourceIn;
 	float			feedBackIn;
+	ofPixels		pixelsVideoFrame;
 	ofPixels		pixelsIn;
 
 };

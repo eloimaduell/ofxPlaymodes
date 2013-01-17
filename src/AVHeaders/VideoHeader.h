@@ -81,6 +81,7 @@ public:
 	// 
 	void	setWindowPriority(string s);
 	void	setOffsetInFrames(int o);
+	int		getCurrentPos();
 
 protected:
     VideoBuffer		*buffer;			// pointer to the buffer of video frames

@@ -132,6 +132,7 @@
 		B02F4417154006E500D3D812 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02F4411154006E500D3D812 /* tinyxmlerror.cpp */; };
 		B02F4418154006E500D3D812 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02F4412154006E500D3D812 /* tinyxmlparser.cpp */; };
 		B02F4419154006E500D3D812 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02F4414154006E500D3D812 /* ofxXmlSettings.cpp */; };
+		B0A5C4D716A48C8800936397 /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0A5C4D516A48C8800936397 /* ofxLabel.cpp */; };
 		B0D9B01E16A2086700821921 /* aenv~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D9B01616A2086700821921 /* aenv~.c */; };
 		B0D9B02016A2086700821921 /* partconv~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D9B01816A2086700821921 /* partconv~.c */; };
 		B0D9B02116A2086700821921 /* pvoc~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D9B01916A2086700821921 /* pvoc~.c */; };
@@ -323,9 +324,6 @@
 		B01AD555168145100041DC43 /* ofxOscReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscReceiver.h; sourceTree = "<group>"; };
 		B01AD556168145100041DC43 /* ofxOscSender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxOscSender.cpp; sourceTree = "<group>"; };
 		B01AD557168145100041DC43 /* ofxOscSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxOscSender.h; sourceTree = "<group>"; };
-		B01AD56C168145D50041DC43 /* .cproject */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .cproject; sourceTree = "<group>"; };
-		B01AD56D168145D50041DC43 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		B01AD56E168145D50041DC43 /* .project */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = .project; sourceTree = "<group>"; };
 		B01AD5CE168145D50041DC43 /* AudioHeaderSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioHeaderSample.cpp; sourceTree = "<group>"; };
 		B01AD5CF168145D50041DC43 /* AudioHeaderSample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioHeaderSample.h; sourceTree = "<group>"; };
 		B01AD5D0168145D50041DC43 /* VideoHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoHeader.cpp; sourceTree = "<group>"; };
@@ -501,6 +499,8 @@
 		B02F4412154006E500D3D812 /* tinyxmlparser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tinyxmlparser.cpp; sourceTree = "<group>"; };
 		B02F4414154006E500D3D812 /* ofxXmlSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxXmlSettings.cpp; sourceTree = "<group>"; };
 		B02F4415154006E500D3D812 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
+		B0A5C4D516A48C8800936397 /* ofxLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLabel.cpp; sourceTree = "<group>"; };
+		B0A5C4D616A48C8800936397 /* ofxLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLabel.h; sourceTree = "<group>"; };
 		B0D9B01616A2086700821921 /* aenv~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aenv~.c"; path = "bsaylor/aenv~.c"; sourceTree = "<group>"; };
 		B0D9B01816A2086700821921 /* partconv~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "partconv~.c"; path = "bsaylor/partconv~.c"; sourceTree = "<group>"; };
 		B0D9B01916A2086700821921 /* pvoc~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "pvoc~.c"; path = "bsaylor/pvoc~.c"; sourceTree = "<group>"; };
@@ -662,6 +662,8 @@
 		B01AD4FB168144E00041DC43 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B0A5C4D516A48C8800936397 /* ofxLabel.cpp */,
+				B0A5C4D616A48C8800936397 /* ofxLabel.h */,
 				B01AD4FC168144E00041DC43 /* ofOscParameter.h */,
 				B01AD4FD168144E00041DC43 /* ofParameter.h */,
 				B01AD4FE168144E00041DC43 /* ofxBaseGui.cpp */,
@@ -787,9 +789,6 @@
 		B01AD56B168145D50041DC43 /* ofxPlaymodes */ = {
 			isa = PBXGroup;
 			children = (
-				B01AD56C168145D50041DC43 /* .cproject */,
-				B01AD56D168145D50041DC43 /* .gitignore */,
-				B01AD56E168145D50041DC43 /* .project */,
 				B01AD5CC168145D50041DC43 /* src */,
 			);
 			name = ofxPlaymodes;
@@ -1729,6 +1728,7 @@
 				B0D9B02316A2086700821921 /* susloop~.c in Sources */,
 				B0D9B02416A2086700821921 /* svf~.c in Sources */,
 				B0D9B02516A2086700821921 /* zhzxh~.c in Sources */,
+				B0A5C4D716A48C8800936397 /* ofxLabel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

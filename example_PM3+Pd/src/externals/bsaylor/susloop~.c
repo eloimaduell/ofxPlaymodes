@@ -146,4 +146,5 @@ void susloop_tilde_setup(void)
 	CLASS_MAINSIGNALIN(susloop_class, t_susloop, f);
 	class_addmethod(susloop_class, (t_method)susloop_dsp, gensym("dsp"), 0);
 	class_addmethod(susloop_class, (t_method)susloop_setfunc, gensym("type"), A_DEFFLOAT, 0);
+	printf("susloop_tilde_setup finished.\n");
 }

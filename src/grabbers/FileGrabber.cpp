@@ -30,6 +30,6 @@ void FileGrabber::update(){
 }
 
 float FileGrabber::getFps(){
-    return 25;
+    return 30;
 }
 }
