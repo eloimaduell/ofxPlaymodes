@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B0094BF716AB756700CC50FC /* VideoFeedbackGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0094BF516AB756700CC50FC /* VideoFeedbackGPU.cpp */; };
+		B0094C3116AB778D00CC50FC /* VideoDryWetGPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0094C2F16AB778D00CC50FC /* VideoDryWetGPU.cpp */; };
 		B01AD509168144E00041DC43 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B01AD4FE168144E00041DC43 /* ofxBaseGui.cpp */; };
 		B01AD50A168144E00041DC43 /* ofxButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B01AD500168144E00041DC43 /* ofxButton.cpp */; };
 		B01AD50B168144E00041DC43 /* ofxPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B01AD503168144E00041DC43 /* ofxPanel.cpp */; };
@@ -133,6 +135,8 @@
 		B02F4418154006E500D3D812 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02F4412154006E500D3D812 /* tinyxmlparser.cpp */; };
 		B02F4419154006E500D3D812 /* ofxXmlSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B02F4414154006E500D3D812 /* ofxXmlSettings.cpp */; };
 		B0A5C4D716A48C8800936397 /* ofxLabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0A5C4D516A48C8800936397 /* ofxLabel.cpp */; };
+		B0C326B816AB4B7500CCEAB4 /* lrshift~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0C326B716AB4B7500CCEAB4 /* lrshift~.c */; };
+		B0D3B62016B5E71A00891C71 /* PmPdVideoHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0D3B61E16B5E71A00891C71 /* PmPdVideoHeader.cpp */; };
 		B0D9B01E16A2086700821921 /* aenv~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D9B01616A2086700821921 /* aenv~.c */; };
 		B0D9B02016A2086700821921 /* partconv~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D9B01816A2086700821921 /* partconv~.c */; };
 		B0D9B02116A2086700821921 /* pvoc~.c in Sources */ = {isa = PBXBuildFile; fileRef = B0D9B01916A2086700821921 /* pvoc~.c */; };
@@ -278,6 +282,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B0094BF516AB756700CC50FC /* VideoFeedbackGPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFeedbackGPU.cpp; sourceTree = "<group>"; };
+		B0094BF616AB756700CC50FC /* VideoFeedbackGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFeedbackGPU.h; sourceTree = "<group>"; };
+		B0094C2F16AB778D00CC50FC /* VideoDryWetGPU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoDryWetGPU.cpp; sourceTree = "<group>"; };
+		B0094C3016AB778D00CC50FC /* VideoDryWetGPU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoDryWetGPU.h; sourceTree = "<group>"; };
 		B01AD4FC168144E00041DC43 /* ofOscParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofOscParameter.h; sourceTree = "<group>"; };
 		B01AD4FD168144E00041DC43 /* ofParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofParameter.h; sourceTree = "<group>"; };
 		B01AD4FE168144E00041DC43 /* ofxBaseGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBaseGui.cpp; sourceTree = "<group>"; };
@@ -501,6 +509,9 @@
 		B02F4415154006E500D3D812 /* ofxXmlSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxXmlSettings.h; sourceTree = "<group>"; };
 		B0A5C4D516A48C8800936397 /* ofxLabel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxLabel.cpp; sourceTree = "<group>"; };
 		B0A5C4D616A48C8800936397 /* ofxLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxLabel.h; sourceTree = "<group>"; };
+		B0C326B716AB4B7500CCEAB4 /* lrshift~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "lrshift~.c"; sourceTree = "<group>"; };
+		B0D3B61E16B5E71A00891C71 /* PmPdVideoHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PmPdVideoHeader.cpp; sourceTree = "<group>"; };
+		B0D3B61F16B5E71A00891C71 /* PmPdVideoHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PmPdVideoHeader.h; sourceTree = "<group>"; };
 		B0D9B01616A2086700821921 /* aenv~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "aenv~.c"; path = "bsaylor/aenv~.c"; sourceTree = "<group>"; };
 		B0D9B01816A2086700821921 /* partconv~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "partconv~.c"; path = "bsaylor/partconv~.c"; sourceTree = "<group>"; };
 		B0D9B01916A2086700821921 /* pvoc~.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "pvoc~.c"; path = "bsaylor/pvoc~.c"; sourceTree = "<group>"; };
@@ -816,6 +827,8 @@
 		B01AD5CD168145D50041DC43 /* AVHeaders */ = {
 			isa = PBXGroup;
 			children = (
+				B0D3B61E16B5E71A00891C71 /* PmPdVideoHeader.cpp */,
+				B0D3B61F16B5E71A00891C71 /* PmPdVideoHeader.h */,
 				B01AD5CE168145D50041DC43 /* AudioHeaderSample.cpp */,
 				B01AD5CF168145D50041DC43 /* AudioHeaderSample.h */,
 				B01AD5D0168145D50041DC43 /* VideoHeader.cpp */,
@@ -844,6 +857,10 @@
 		B01AD5DD168145D50041DC43 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				B0094C2F16AB778D00CC50FC /* VideoDryWetGPU.cpp */,
+				B0094C3016AB778D00CC50FC /* VideoDryWetGPU.h */,
+				B0094BF516AB756700CC50FC /* VideoFeedbackGPU.cpp */,
+				B0094BF616AB756700CC50FC /* VideoFeedbackGPU.h */,
 				B01AD5DE168145D50041DC43 /* VideoFilter.cpp */,
 				B01AD5DF168145D50041DC43 /* VideoFilter.h */,
 				B01AD5E0168145D50041DC43 /* VideoRate.cpp */,
@@ -1193,6 +1210,14 @@
 			path = src;
 			sourceTree = "<group>";
 		};
+		B0C326B616AB4B7500CCEAB4 /* lrshift~ */ = {
+			isa = PBXGroup;
+			children = (
+				B0C326B716AB4B7500CCEAB4 /* lrshift~.c */,
+			);
+			path = "lrshift~";
+			sourceTree = "<group>";
+		};
 		B0D9B00F16A207A200821921 /* bsaylor */ = {
 			isa = PBXGroup;
 			children = (
@@ -1210,6 +1235,7 @@
 		B0E1C6131695147700F87205 /* externals */ = {
 			isa = PBXGroup;
 			children = (
+				B0C326B616AB4B7500CCEAB4 /* lrshift~ */,
 				B0D9B00F16A207A200821921 /* bsaylor */,
 				B0E1C80E1696485600F87205 /* zexy */,
 				B0E1C6141695148300F87205 /* expr~ */,
@@ -1729,6 +1755,10 @@
 				B0D9B02416A2086700821921 /* svf~.c in Sources */,
 				B0D9B02516A2086700821921 /* zhzxh~.c in Sources */,
 				B0A5C4D716A48C8800936397 /* ofxLabel.cpp in Sources */,
+				B0C326B816AB4B7500CCEAB4 /* lrshift~.c in Sources */,
+				B0094BF716AB756700CC50FC /* VideoFeedbackGPU.cpp in Sources */,
+				B0094C3116AB778D00CC50FC /* VideoDryWetGPU.cpp in Sources */,
+				B0D3B62016B5E71A00891C71 /* PmPdVideoHeader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

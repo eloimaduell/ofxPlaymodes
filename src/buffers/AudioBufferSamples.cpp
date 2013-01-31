@@ -179,6 +179,5 @@ namespace ofxPm{
 	{
 		return stopped;
 	}
-	
 
 }

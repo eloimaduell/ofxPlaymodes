@@ -159,10 +159,10 @@ VideoFrame VideoHeader::getVideoFrame(int index)
 //------------------------------------------------------
 VideoFrame VideoHeader::getNextVideoFrame(){
 
-        buffer->lock();
+        //buffer->lock();
 			currentPos=getNextPosition();
 			VideoFrame frame = buffer->getVideoFrame(currentPos);
-        buffer->unlock();
+        //buffer->unlock();
         return frame;
 }
 
@@ -185,6 +185,16 @@ int VideoHeader::getNextPosition(){
 	int backpos;
 	int nextPos;
 	
+	buffer_size=buffer->size();
+	totalNumFr = buffer->getTotalFrames();
+	lastAbsFrame = totalNumFr - buffer_size; 
+	//			inFrame  = int(double(buffer_size-1)*(in));
+	//			outFrame = int(double(buffer_size-1)*(out));
+	inFrame = this->getInFrames();
+	outFrame = this->getOutFrames();
+	inAbsFrame  = totalNumFr -  inFrame;
+	outAbsFrame = totalNumFr - outFrame;
+
 	switch (driveMode) 
 	{
 		case 0 :
@@ -193,15 +203,6 @@ int VideoHeader::getNextPosition(){
 			if(playing) oneFrame=(TimeDiff)(1000000.0/fps/speed);
 			else oneFrame=(TimeDiff)(1000000.0/fps/1.0);
 			
-			buffer_size=buffer->size();
-			totalNumFr = buffer->getTotalFrames();
-			lastAbsFrame = totalNumFr - buffer_size; 
-//			inFrame  = int(double(buffer_size-1)*(in));
-//			outFrame = int(double(buffer_size-1)*(out));
-			inFrame = this->getInFrames();
-			outFrame = this->getOutFrames();
-			inAbsFrame  = totalNumFr -  inFrame;
-			outAbsFrame = totalNumFr - outFrame;
 
 			// if time spend since last positionTS.update() + portion to next frame is >= oneFrame
 			// means that we need to update the position !!
@@ -227,6 +228,7 @@ int VideoHeader::getNextPosition(){
 			// if we're playing in loop and we're reaching the outpoint
 			if(playing && (int(position) > (outAbsFrame)))
 			{
+				printf("loop-%d ",loopMode);
 				if(loopMode==OF_LOOP_NORMAL) position = double(inAbsFrame);
 				else if (loopMode==OF_LOOP_NONE)
 				{
@@ -272,12 +274,14 @@ int VideoHeader::getNextPosition(){
 			break;
 			
 		case 1 :
+			// here speed should not modify frame ! because audio is driving this 
+			if(playing) oneFrame=(TimeDiff)(1000000.0/fps);
+			else oneFrame=(TimeDiff)(1000000.0/fps/1.0);
+
 			// position driven by audio trough calls to delay !!
-			oneFrame=(TimeDiff)(1000000.0/fps/1.0);
-			buffer_size=buffer->size();
 			nextPos= int(buffer_size-1) - int(double(delay)/double(oneFrame));
 			nextPos = CLAMP(nextPos,0,buffer_size-1);
-			return nextPos;
+			return nextPos-offsetFrames;
 			
 			break;
 		default:
@@ -338,7 +342,7 @@ double VideoHeader::getDelayPct()
 //------------------------------------------------------
 void VideoHeader::setDelayMs(double delayMs)
 {
-	double oneFrame=(TimeDiff)(1000000.0/fps/1.0);
+	oneFrame=(TimeDiff)(1000000.0/fps/1.0);
 	int delayToSet = int(double(delayMs*1000.0));
 
 	// control not out of bounds !! needs more precise control related to bufferMarkers !! (TO DO)
@@ -522,11 +526,16 @@ int VideoHeader::getLoopMode()
 //------------------------------------------------------
 void VideoHeader::setLoopMode(int loop)
 {
+	/*
 	if((loopMode!=OF_LOOP_NORMAL) || (loopMode!=OF_LOOP_NONE) || (loopMode!=OF_LOOP_PALINDROME))
 	{
 		printf("ofxPlaymodes::VideoHeader:: Incorrect loop mode!\n");
 	}
 	else loopMode = loop;
+	 */
+	if (loop==3) loopMode = OF_LOOP_NORMAL;
+	else if (loop==2) loopMode = OF_LOOP_PALINDROME;
+	else if (loop==1) loopMode = OF_LOOP_NONE;
 }
 	
 //------------------------------------------------------

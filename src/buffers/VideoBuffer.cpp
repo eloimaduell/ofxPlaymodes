@@ -20,22 +20,22 @@ VideoBuffer::VideoBuffer(){
 	microsOneSec=0;
 	realFps = 0;
 	framesOneSec = 0;
-	feedBackIn=0.0f;
-	pixelsVideoFrame.allocate(1024,768,OF_PIXELS_RGB);	
-	pixelsIn.allocate(1024,768,OF_PIXELS_RGB);	
 }
 
 
-void VideoBuffer::setup(VideoSource & _source, int size){
-	this->source=&_source;
+void VideoBuffer::setup(VideoSource & source, int size, bool allocateOnSetup){
+	this->source=&source;
 	totalFrames=0;
 	maxSize = size;
+	if(allocateOnSetup){
+		for(int i=0;i<size;i++){
+			VideoFrame videoFrame = VideoFrame::newVideoFrame(source.getNextVideoFrame().getPixelsRef());
+			videoFrame.getTextureRef();
+			newVideoFrame(videoFrame);
+		}
+	}
 	resume();
-	microsOneSec=ofGetElapsedTimeMicros();
-	feedBackIn=0.0f;
-	if(!pixelsVideoFrame.isAllocated()) pixelsVideoFrame.allocate(source->getResolutionX(),source->getResolutionY(),OF_PIXELS_RGB);	
-	if(!pixelsIn.isAllocated()) pixelsIn.allocate(source->getResolutionX(),source->getResolutionX(),OF_PIXELS_RGB);	
-
+	microsOneSec=-1;
 }
 
 VideoBuffer::~VideoBuffer() {
@@ -43,85 +43,24 @@ VideoBuffer::~VideoBuffer() {
 }
 
 void VideoBuffer::newVideoFrame(VideoFrame & frame){
-	unsigned long time = frame.getTimestamp().epochMicroseconds();
+	int64_t time = frame.getTimestamp().epochMicroseconds();
+	if(microsOneSec==-1) microsOneSec=time;
 	framesOneSec++;
-	if(time-microsOneSec>=1000000){
-		realFps = framesOneSec;
+	int64_t diff = time-microsOneSec;
+	if(diff>=1000000){
+		realFps = double(framesOneSec*1000000.)/double(diff);
 		framesOneSec = 0;
-		microsOneSec = time;
+		microsOneSec = time-(diff-1000000);
 	}
     totalFrames++;
     if(size()==0)initTime=frame.getTimestamp();
-	
-    
-	//-- feedback shit
-
-	if(feedBackIn>0.0f) 
-	{
-		pixelsVideoFrame = pixelsIn;
-		/*
-		 VideoFrame tempVideoFrame;
-		 tempVideoFrame = sourceIn->getVideoFrame(sourceIn->getCurrentPos());
-
-		 ofColor color;
-		ofColor colGrab;
-		ofColor colSrc;
-		
-		
-		for(int x=0;x<(640);x++)
-		{
-			for(int y=0;y<(480);y++)
-			{
-				// ??clamp doesn't work ?¿
-				colGrab = ofColor(frame.getPixelsRef().getColor(x,y));
-				colSrc = ofColor(tempVideoFrame.getPixelsRef().getColor(x,y))*feedBackIn;
-				color = colGrab + colSrc;
-				pixelsIn.setColor(x,y,color);
-				
-				 
-				
-//				int red = frame.getPixelsRef().getColor(x,y)[0];
-//				int green = frame.getPixelsRef().getColor(x,y)[1];
-//				int blue = frame.getPixelsRef().getColor(x,y)[2];
-//				
-//				int red2 = tempVideoFrame.getPixelsRef().getColor(x,y)[0];
-//				int green2 = tempVideoFrame.getPixelsRef().getColor(x,y)[1];
-//				int blue2 = tempVideoFrame.getPixelsRef().getColor(x,y)[2];
-//								
-//				if(int(red) + int(float(red2*feedBackIn)) > 255) color[0] = 255;
-//				else color[0] = int(red) + int(float(red2*feedBackIn));
-//				
-//				if(int(green) + int(float(green2*feedBackIn)) > 255) color[1] = 255;
-//				else color[1] = int(green) + int(float(green2*feedBackIn));
-//
-//				if(int(blue) + int(float(blue2*feedBackIn)) > 255) color[2] = 255;
-//				else color[2] = int(blue) + int(float(blue2*feedBackIn));
-//				
-//				 pixelsIn.setColor(x,y,color);
-				 
-				 
-				
-				
-			}
-		 
-		}
-		*/
-		//pixelsIn = tempVideoFrame.getPixelsRef();
-	
-	}
-	else pixelsVideoFrame = frame.getPixelsRef();
-	
-	
-	
-	VideoFrame frameWithFeedback = VideoFrame::newVideoFrame(pixelsVideoFrame);
-	timeMutex.lock();
-	frames.push_back(frameWithFeedback);	
-	//frames.push_back(frame);
+    //timeMutex.lock();
+    frames.push_back(frame);
     while(size()>maxSize){
         frames.erase(frames.begin());
     }
-    timeMutex.unlock();
-    newFrameEvent.notify(this,frameWithFeedback);
+    //timeMutex.unlock();
+    newFrameEvent.notify(this,frame);
 
 }
 
@@ -151,13 +90,14 @@ unsigned int VideoBuffer::getMaxSize(){
 
 
 float VideoBuffer::getFps(){
-    return source->getFps();
+    if(source) return source->getFps();
+    else return 0;
 }
 
 VideoFrame VideoBuffer::getVideoFrame(TimeDiff time){
     VideoFrame frame;
     if(size()>0){
-        int frameback = CLAMP((int)((float)time/1000000.0*(float)getFps()),1,size());
+        int frameback = CLAMP((int)((float)time/1000000.0*(float)getFps()),1,int(size()));
         int currentPos = CLAMP(size()-frameback,0,size()-1);
         frame = frames[currentPos];
     }
@@ -169,7 +109,7 @@ VideoFrame VideoBuffer::getVideoFrame(TimeDiff time){
 VideoFrame VideoBuffer::getVideoFrame(int position){
     //return buffer.find(times[times.size()-position])->second;
     if(size()){
-        position = CLAMP(position,0,size()-1);
+        position = CLAMP(position,0,int(size())-1);
         //cout << "frame " << position << " retained " << frames[position]->_useCountOfThisObject << "\n";
         return frames[position];
     }else{
@@ -259,22 +199,6 @@ void VideoBuffer::clear(){
         frames.erase(frames.begin());
     }
 }
-
-void VideoBuffer::setInSource(VideoSource & s)
-{
-	this->sourceIn = &s;
-}
-	
-void VideoBuffer::setFeedBack(float f)
-{
-	feedBackIn = f;
 }
 
-
-void VideoBuffer::setPixelsIn(ofPixels &p)
-{
-	pixelsIn = p;
-}
-
-}
 

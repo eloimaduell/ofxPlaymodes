@@ -32,7 +32,7 @@ public:
 	VideoBuffer();
 	virtual ~VideoBuffer();
 
-	void setup(VideoSource & source, int size);
+	void setup(VideoSource & source, int size, bool allocateOnSetup=false);
 
     // of working in threaded mode,
     // call buffer->lock() buffer->unlock()
@@ -40,7 +40,12 @@ public:
 	VideoFrame getVideoFrame(int position);       // frame number in the buffer
 	VideoFrame getVideoFrame(TimeDiff time);    // frame at n microseconds from the end of the buffer
 	VideoFrame getVideoFrame(float pct);          // % of the buffer
+
 	VideoFrame getNextVideoFrame();               // the last video frame in the buffer
+
+
+
+
 
 	virtual void newVideoFrame(VideoFrame &frame);  // for notification of new frame event
 
@@ -64,12 +69,7 @@ public:
     bool isStopped();
 
     void clear();
-	
-	// feed back
-	void setInSource(VideoSource & s);
-	void setFeedBack(float f);
-	void setPixelsIn(ofPixels &p);
-	
+
 protected:
     deque<VideoFrame> frames;
 
@@ -81,14 +81,8 @@ protected:
     bool stopped;
     unsigned int maxSize;
     int framesOneSec;
-    unsigned long microsOneSec;
+    int64_t microsOneSec;
     int realFps;
-	
-	VideoSource*	sourceIn;
-	float			feedBackIn;
-	ofPixels		pixelsVideoFrame;
-	ofPixels		pixelsIn;
-
 };
 }
 #endif /* VIDEOBUFFER_H_ */

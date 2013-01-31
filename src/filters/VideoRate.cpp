@@ -11,7 +11,8 @@ namespace ofxPm{
 
 VideoRate::VideoRate()
 :source(0)
-,fps(30){
+,fps(30)
+,remainder(0){
 	// TODO Auto-generated constructor stub
 
 }
@@ -25,7 +26,9 @@ void VideoRate::setup(VideoSource & _source, float fps){
 	source = &_source;
 	ofAddListener(source->newFrameEvent,this,&VideoRate::newVideoFrame);
 	setFps(fps);
-	startThread(true,false);
+	front = _source.getNextVideoFrame();
+	//startThread(true,false);
+	ofAddListener(ofEvents().update,this,&VideoRate::glThreadUpdate);
 }
 	
 void VideoRate::removeListener()
@@ -57,23 +60,30 @@ void VideoRate::setFps(float _fps){
 
 void VideoRate::threadedFunction(){
 	while(isThreadRunning()){
-		unsigned long time = ofGetElapsedTimeMicros();
+		unsigned long long time = ofGetElapsedTimeMicros();
 		if(back!=NULL){
-			mutex.lock();
-			VideoFrame currFrame = back;
-			mutex.unlock();
-
 			mutexFront.lock();
-			front = VideoFrame::newVideoFrame(currFrame.getPixelsRef());
+			framesToSend.push(back);
 			mutexFront.unlock();
-			ofNotifyEvent(newFrameEvent,front);
 		}
 		time = ofGetElapsedTimeMicros()-time;
-		long sleeptime =  1000000./fps-time;
+		long long sleeptime =  1000000./fps-time;
 		if(sleeptime>0){
 			usleep(sleeptime);
 		}
 	}
 }
 
+void VideoRate::glThreadUpdate(ofEventArgs & args){
+	double dFrames = ofGetLastFrameTime()*fps+remainder;
+	int framesToSend = dFrames;
+	remainder = dFrames-framesToSend;
+
+	if(back!=NULL){
+		for(int i=0;i<framesToSend;i++){
+			VideoFrame newFrame = VideoFrame::newVideoFrame(back);
+			ofNotifyEvent(newFrameEvent,newFrame);
+		}
+	}
+}
 }
