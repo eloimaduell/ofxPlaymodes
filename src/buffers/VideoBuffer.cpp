@@ -7,9 +7,10 @@
 
 #include "VideoBuffer.h"
 #include "VideoHeader.h"
+
 namespace ofxPm{
 VideoBuffer::VideoBuffer(VideoSource & source, int size) {
-	setup(source,size);
+	setup(source,size,true);
 }
 
 VideoBuffer::VideoBuffer(){
@@ -18,21 +19,28 @@ VideoBuffer::VideoBuffer(){
 	stopped = false;
 	maxSize = 0;
 	microsOneSec=0;
-	realFps = 0;
+	realFps = 0.0;
 	framesOneSec = 0;
 }
 
 
-void VideoBuffer::setup(VideoSource & source, int size, bool allocateOnSetup){
-	this->source=&source;
+void VideoBuffer::setup(VideoSource & _source, int size, bool allocateOnSetup){
+	source=&_source;
 	totalFrames=0;
 	maxSize = size;
+	
+	VideoSource::width = _source.getWidth();
+	VideoSource::height = _source.getHeight();
+
 	if(allocateOnSetup){
+		printf("VideoBuffer:: allocating on setup %d %d : ",VideoSource::getWidth(),VideoSource::getHeight());
 		for(int i=0;i<size;i++){
-			VideoFrame videoFrame = VideoFrame::newVideoFrame(source.getNextVideoFrame().getPixelsRef());
-			videoFrame.getTextureRef();
+			VideoFrame videoFrame = VideoFrame::newVideoFrame(source->getNextVideoFrame().getPixelsRef());
+			//videoFrame.getTextureRef();
 			newVideoFrame(videoFrame);
+			printf("%d-",i);
 		}
+		printf("//\n");
 	}
 	resume();
 	microsOneSec=-1;
@@ -129,7 +137,7 @@ long VideoBuffer::getTotalFrames(){
     return totalFrames;
 }
 
-float VideoBuffer::getRealFPS(){
+double VideoBuffer::getRealFPS(){
     return realFps;
 }
 

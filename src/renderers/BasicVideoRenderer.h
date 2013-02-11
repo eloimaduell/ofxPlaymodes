@@ -11,6 +11,8 @@
 #include "VideoSink.h"
 #include "VideoSource.h"
 #include "VideoHeader.h"
+#include "ofPBO.h"
+
 
 namespace ofxPm
 {
@@ -28,6 +30,10 @@ public:
 
 private:
 	VideoSource * source;
+	ofTexture	tex;
+	ofPBO		pbo;
+	bool		updateTex;
+	
 };
 }
 #endif /* BASICVIDEORENDERER_H_ */

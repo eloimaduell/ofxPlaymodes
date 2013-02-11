@@ -16,7 +16,11 @@ VideoGrabber::~VideoGrabber(){
 
 bool VideoGrabber::initGrabber(int w, int h){
 	bool ret = ofVideoGrabber::initGrabber(w,h,false);
-	frame = VideoFrame::newVideoFrame(getPixelsRef());
+	frame    = VideoFrame::newVideoFrame(getPixelsRef());
+	VideoSource::width    = ofVideoGrabber::getWidth();
+	VideoSource::height   = ofVideoGrabber::getHeight();
+	
+	printf("VideoGrabber::initGrabber %d %d\n",VideoSource::width,VideoSource::height);
 	return ret;
 }
 
@@ -33,7 +37,7 @@ void VideoGrabber::update(){
 
 void VideoGrabber::newFrame(ofPixels & pixels){
 	frame = VideoFrame::newVideoFrame(pixels);
-	frame.getTextureRef();
+	//frame.getTextureRef();
 	newFrameEvent.notify(this,frame);
 }
 

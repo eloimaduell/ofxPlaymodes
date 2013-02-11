@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/pure-data/!svn/ver/11705/branches/pd-extended/0.42/pd/extra/lrshift~
+END
+lrshift~-help.pd
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svnroot/pure-data/!svn/ver/11705/branches/pd-extended/0.42/pd/extra/lrshift~/lrshift~-help.pd
+END
+lrshift~.c
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/pure-data/!svn/ver/11705/branches/pd-extended/0.42/pd/extra/lrshift~/lrshift~.c
+END
+makefile
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/pure-data/!svn/ver/11695/branches/pd-extended/0.42/pd/extra/lrshift~/makefile
+END

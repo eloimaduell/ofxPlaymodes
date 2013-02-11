@@ -33,17 +33,19 @@ VideoHeader::VideoHeader(){
 	windowPriority = "in";
 	length = 0;
 	offsetFrames = 0.0;
+	width = -11;
+	height = -11;
 }
 
 
 //------------------------------------------------------
-void VideoHeader::setup(VideoBuffer & buffer){
+void VideoHeader::setup(VideoBuffer & _buffer){
     //newFrameEvent.init("Playmodes.VideoHeader.newFrame");
-    this->buffer= &buffer;
-    fps         = buffer.getFps();
+    this->buffer= &_buffer;
+    fps         = _buffer.getFps();
 	this->buffer->clear();
-    position    = buffer.size();
-	totalBufferSizeInMs = buffer.size() * (1000.0/fps);
+    position    = _buffer.size();
+	totalBufferSizeInMs = _buffer.size() * (1000.0/fps);
     oneFrame    = (TimeDiff)round(1000000.0/(double)fps);
 	oneFrameMs	= 1000.0 / fps;
     speed       = 1;
@@ -59,8 +61,11 @@ void VideoHeader::setup(VideoBuffer & buffer){
 	currentPos  = 0;
 	windowPriority = "in";
 	offsetFrames = 0.0;
-
 	
+	VideoSource::width = _buffer.getWidth();
+	VideoSource::height = _buffer.getHeight();
+	
+	printf("VideoHeader::setup %d %d FPS %f\n",VideoSource::width,VideoSource::height,fps);
 }
 
 //------------------------------------------------------
@@ -159,10 +164,10 @@ VideoFrame VideoHeader::getVideoFrame(int index)
 //------------------------------------------------------
 VideoFrame VideoHeader::getNextVideoFrame(){
 
-        //buffer->lock();
+        buffer->lock();
 			currentPos=getNextPosition();
 			VideoFrame frame = buffer->getVideoFrame(currentPos);
-        //buffer->unlock();
+        buffer->unlock();
         return frame;
 }
 
@@ -349,6 +354,7 @@ void VideoHeader::setDelayMs(double delayMs)
 	if(delayToSet<0) delayToSet = 0;
 	else if (delayToSet>int(double(buffer->getMaxSize()-1)*double(oneFrame))) delayToSet = int(double(buffer->getMaxSize()-1)*double(oneFrame));
 
+	
 	//int totalNumFr = buffer->getTotalFrames();
 	//int	outFrame = this->getOutFrames();
 	//int outAbsFrame = totalNumFr - outFrame;
@@ -621,8 +627,11 @@ string VideoHeader::getInfo()
 		+" || out_" + ofToString(out) 
 		+" || inAbsF_" + ofToString(inAbsFrame)
 		+" || outAbFs_" + ofToString(outAbsFrame)
+	    +"\n"
 		+" || currentPosF_" +ofToString(currentPos,2)
 		+" || positionF_" +ofToString(position,2)
+		+" || delay_ " +ofToString(delay,2)
+	
 	;
 /*
 		+" || LastAbsF_" + ofToString(buffer->getTotalFrames() - buffer->size())

@@ -3,15 +3,18 @@
 #include "ofMain.h"
 #include "VideoBuffer.h"
 #include "VideoHeader.h"
+#include "PmPdVideoHeader.h"
 #include "VideoGrabber.h"
 #include "VideoRenderer.h"
 #include "VideoRate.h"
 #include "BasicVideoRenderer.h"
+#include "VideoFeedbackPixelsGPU.h"
+#include "VideoDryWetPixelsGPU.h"
 #include "FileGrabber.h"
 #include "ofxGui.h"
 #include "ofxPd.h"
 
-//pd externals ----------------------
+// pd externals ----------------------
 
 #pragma once
 extern "C" {
@@ -26,6 +29,10 @@ extern "C" {
 #pragma once
 extern "C" {
     void susloop_tilde_setup();
+}
+
+extern "C" {
+    void lrshift_tilde_setup();
 }
 
 //_pd externals ----------------------
@@ -49,29 +56,39 @@ public:
 	void drawPdBuffer();
 	
 	
-	
-	////////////////////
-	// ofxPlaymodes
-	////////////////
-	ofxPm::VideoGrabber			grabber;
-	ofxPm::VideoBuffer			vBuffer;
-	ofxPm::VideoHeader			vHeader;
-	ofxPm::BasicVideoRenderer	vRendererBuffer,vRendererHeader;
-	ofxPm::VideoRate			vRate;
-	int							durationInFrames;
-	ofVec2f						grabberResolution;
-	float						grabberAspectRatio;
-
 	// others
 	bool						showGUI;
 	bool						fullscreen;
 	std::vector<ofVec2f>		arrayForDrawAudio;
+	
+	////////////////////
+	// ofxPlaymodes
+	///////////////////
+	
+	ofxPm::VideoGrabber				grabber;
+	ofxPm::VideoBuffer				vBuffer;
+	ofxPm::PmPdVideoHeader			vHeader;
+	ofxPm::BasicVideoRenderer		vRendererGrabber,vRendererBuffer,vRendererHeader,vRendererFinal;
+	ofxPm::VideoRate				vRate;
+	ofxPm::VideoFeedbackPixelsGPU	vFeedback;
+	ofxPm::VideoDryWetPixelsGPU		vDryWet;
+
+	int							durationInFrames;
+	ofVec2f						grabberResolution;
+	float						grabberAspectRatio;
+
 
 	////////////////////
 	// ofxGUI
 	////////////////////
 	
-	ofxPanel		gui;
+	void			setupGUI();
+	
+	ofxPanel		controlPanel;
+	ofxPanel		configPanel;
+	ofxPanel		levelsPanel;
+	ofxPanel		grainPanel;
+	ofxPanel		envFollowPanel;
 	
 	ofxFloatSlider	delay;
 	ofxFloatSlider	in;
@@ -81,19 +98,27 @@ public:
 	ofxFloatSlider	feedBack;
 	ofxFloatSlider	opacityOut;
 	ofxFloatSlider	opacityIn;
-	ofxFloatSlider	attack;
-	ofxFloatSlider	decay;	
+	ofxFloatSlider	attackGrain;
+	ofxFloatSlider	decayGrain;	
 	ofxFloatSlider	dryWet;	
+	ofxFloatSlider	pitch;
+	
 	ofxToggle		rec;
 	ofxToggle		play;
 	ofxToggle		opacityEnvToggle;
 	ofxToggle		fullGrain;
 	ofxToggle		drawAudioToggle;
+	ofxToggle		drawBufferToggle;
 	ofxToggle		grabberSettingsToggle;
+	ofxToggle		playAudioFrameToggle;
+	ofxToggle		timeStretchToggle;
+	ofxToggle		keepDurationToggle;
+	
 	ofxIntSlider	scratchFactor;
 	ofxIntSlider	drawAudioResolution;
 	ofxIntSlider	avSyncOffset;
-	ofxIntSlider	fps;
+	ofxIntSlider	recRate;
+	ofxIntSlider	loopType;   	//	OF_LOOP_NONE=0x01 //	OF_LOOP_PALINDROME=0x02 //	OF_LOOP_NORMAL=0x03
 	ofxLabel		audioLabel;
 	ofxLabel		presetLabel;
 	ofxLabel		controlLabel;
@@ -108,35 +133,30 @@ public:
 	void feedBackChanged(float &f);
 	void opacityOutChanged(float &f);
 	void opacityInChanged(float &f);
-	void attackChanged(float &f);
-	void decayChanged(float &f);
+	void attackGrainChanged(float &f);
+	void decayGrainChanged(float &f);
 	void delayChanged(float &f);
 	void dryWetChanged(float &f);
 	
 	// changed int's
 	////////////////////
-	void fpsChanged(int &i);
+	void recRateChanged(int &i);
 	void avSyncOffsetChanged(int &i);
 	void scratchFactorChanged(int &i);
+	void loopTypeChanged(int &i);
+	
 	// changed bool's
 	////////////////////
 	void recChanged(bool &b);
 	void playChanged(bool &b);
 	void drawAudioChanged(bool &b);
+	void drawBufferChanged(bool &b);
 	void fullGrainChanged(bool &b);
 	void opacityEnvToggleChanged(bool &b);
 	void grabberSettingsToggleChanged(bool &b);
-	
-	float	oldRec;
-	float	oldPlay;
-	float	oldDelay;
-	float	oldSpeed;
-	float	oldScratch;
-	float	oldOpacityOut;
-	float	oldLength;
-	bool	oldFullGrain;
-	bool	oldOpacityEnvToggle;
-	
+	void playAudioFrameToggleChanged(bool &b);
+	void timeStretchToggleChanged(bool &b);
+	void keepDurationToggleChanged(bool &b);
 	
 	////////////////////
 	// ofxPd
@@ -161,7 +181,7 @@ public:
 	ofFbo		fboFeedback;
 	ofImage		image;
 	ofPixels	pixelsToBuffer;
-	ofxPm::FileGrabber	videoGrabber;
+	ofxPm::FileGrabber	videoFileGrabber;
 	int		grabberInput;
 
 	

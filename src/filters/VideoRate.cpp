@@ -29,6 +29,10 @@ void VideoRate::setup(VideoSource & _source, float fps){
 	front = _source.getNextVideoFrame();
 	//startThread(true,false);
 	ofAddListener(ofEvents().update,this,&VideoRate::glThreadUpdate);
+	VideoSource::width = source->getWidth();
+	VideoSource::height = source->getHeight();
+	
+	printf("VideoRate::setup %d %d FPS %f\n",source->getWidth(),source->getHeight(),fps);
 }
 	
 void VideoRate::removeListener()
@@ -86,4 +90,5 @@ void VideoRate::glThreadUpdate(ofEventArgs & args){
 		}
 	}
 }
+	
 }

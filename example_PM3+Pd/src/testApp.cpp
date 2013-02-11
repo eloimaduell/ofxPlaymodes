@@ -6,6 +6,7 @@ using namespace ofxPm;
 //
 
 bool drawHelp = false;
+bool runPdAudio = true;
 
 //--------------------------------------------------------------
 void testApp::setup(){
@@ -17,164 +18,127 @@ void testApp::setup(){
 	drawAudioResolution=1;	
 	grabberResolution = ofVec2f(640.0,480.0);
 	grabberAspectRatio = grabberResolution.x / grabberResolution.y;
+	ofBackground(25);
+	ofEnableAlphaBlending();
 
-	////////////////////
-	// ofxGUI
-	////////////////////	
-	gui.setup();
+	setupGUI();
 	
-	gui.setName("PLAYMODES");
-	gui.add(setupLabel.setup			(ofToString("setupLabel"),ofToString("setup : ")+ofToString(patchName)));
-	gui.add(fps.setup					("rec at fps",30,1,200));
-	gui.add(avSyncOffset.setup			("av-sync offset",0,-50,50));
-	gui.add(opacityIn.setup				("opacity in",1.0,0.0,1.0));
-	gui.add(opacityOut.setup			("opacity out",1.0,0.0,1.0));
-	gui.add(dryWet.setup				("dry / wet",1.0,0.0,1.0));
-	gui.add(drawAudioToggle.setup		("draw audio",true));	
-	gui.add(grabberSettingsToggle.setup	("grabber settings",false));
-	gui.add(opacityEnvToggle.setup		("opacity env",false));
-
-	gui.add(controlLabel.setup		(ofToString("controlLabel"),ofToString("control")));
-	gui.add(rec.setup				("rec",true));
-	gui.add(play.setup				("play",false));
-	gui.add(delay.setup				("delay ms",0.0,0.0,13333.0));
-	gui.add(length.setup			("length ms",13333.0,0.0,13333.0));
-	gui.add(in.setup				("in ms",13333.0,0.0,13333.0));
-	gui.add(out.setup				("out ms",0.0,0.0,13333.0));
-	gui.add(speed.setup				("speed",1.0,-4.0,4.0));
-	gui.add(feedBack.setup			("feedBack",0.0,0.0,1.0));
-
-	gui.add(audioLabel.setup		(ofToString("audioLabel"),ofToString("audio")));
-	gui.add(scratchFactor.setup		("scratch factor",0.0,0.0,4000.0));
-	gui.add(attack.setup			("attack",0.0,0.0,2000.0));
-	gui.add(decay.setup				("decay",0.0,0.0,2000.0));
-	gui.add(fullGrain.setup			("play full grain",false));
-	gui.add(presetLabel.setup		(ofToString("presetLabel"),ofToString("preset : none")));
+	/////////////////////////
+	// ofxPlaymodes pipeline
+	/////////////////////////
 	
-	////////////////////
-	// - add listener's for events.	
-	////////////////////
-	gui.getFloatSlider("in ms").addListener(this,&testApp::inChanged);
-	gui.getFloatSlider("out ms").addListener(this,&testApp::outChanged);
-	gui.getFloatSlider("length ms").addListener(this,&testApp::lengthChanged);
-	gui.getFloatSlider("delay ms").addListener(this,&testApp::delayChanged);
-	gui.getFloatSlider("speed").addListener(this,&testApp::speedChanged);
-	gui.getFloatSlider("feedBack").addListener(this,&testApp::feedBackChanged);
-	gui.getFloatSlider("opacity in").addListener(this,&testApp::opacityInChanged);
-	gui.getFloatSlider("opacity out").addListener(this,&testApp::opacityOutChanged);
-	gui.getFloatSlider("attack").addListener(this,&testApp::attackChanged);
-	gui.getFloatSlider("decay").addListener(this,&testApp::decayChanged);
-	gui.getFloatSlider("dry / wet").addListener(this,&testApp::dryWetChanged);
-	
-	gui.getIntSlider("rec at fps").addListener(this,&testApp::fpsChanged);
-	gui.getIntSlider("av-sync offset").addListener(this,&testApp::avSyncOffsetChanged);
-	gui.getIntSlider("scratch factor").addListener(this,&testApp::scratchFactorChanged);	
-
-	gui.getToggle("rec").addListener(this,&testApp::recChanged);	
-	gui.getToggle("play").addListener(this,&testApp::playChanged);	
-	gui.getToggle("draw audio").addListener(this,&testApp::drawAudioChanged);	
-	gui.getToggle("play full grain").addListener(this,&testApp::fullGrainChanged);	
-	gui.getToggle("opacity env").addListener(this,&testApp::opacityEnvToggleChanged);	
-	gui.getToggle("grabber settings").addListener(this,&testApp::grabberSettingsToggleChanged);	
-	
-	////////////////////
-	// fbo and pixel allocation
-	////////////////////
-	fboA.allocate(grabberResolution.x, grabberResolution.y,GL_RGB,0);
-	fboFeedback.allocate(grabberResolution.x, grabberResolution.y,GL_RGB,0);
-	pixelsToBuffer.allocate(grabberResolution.x, grabberResolution.y,OF_PIXELS_RGB);
-
-	////////////////////
-	// playmodes3 pipeline basic init
-	////////////////////
+	// grabber
+	grabber.setDesiredFrameRate(30);
+	grabber.setFps(30);	
 	grabber.initGrabber(grabberResolution.x,grabberResolution.y);
-	vRate.setup(grabber,fps);
-	vBuffer.setup(vRate,durationInFrames);
+	
+	// feedback	
+	vFeedback.setup(grabber,vHeader);
+	vFeedback.setFeedback(feedBack);
+	vFeedback.setInputOpacity(opacityIn);
+
+	// vRate
+	vRate.setup(vFeedback,recRate);
+
+	// vBuffer
+	vBuffer.setup(vRate,durationInFrames, true);
+
+	// vHeader
 	vHeader.setup(vBuffer);
 	vHeader.setDelayMs(delay);
 	vHeader.setInMs(in);
 	vHeader.setOutMs(out);
-	vHeader.setLengthMs(13333.0);	
+	vHeader.setLengthMs((float(durationInFrames)/float(recRate))*1000.0);	
 	vHeader.setWindowPriority("length");
-	vBuffer.setInSource(vHeader);
-	vRendererBuffer.setup(vRate);
+	
+	// vDryWet
+	//vDryWet.setup(vFeedback ,vHeader);
+	//vDryWet.setDryWet(dryWet);
+	
+	// renderers
+	vRendererGrabber.setup(grabber);
+	vRendererBuffer.setup(vBuffer);
 	vRendererHeader.setup(vHeader);
-	ofEnableAlphaBlending();
+	vRendererFinal.setup(vHeader);
 
 	
 	////////////////////
 	// pd stuff
 	////////////////////
-	indexArrayFromPd=0;	
-	sampleRate = 96000;
-	// puredata works on sounds in chunks of 64 samples (called a tick)
-	// 8 ticks per buffer corresponds to 8 * 64 sample buffer size (512 samples)
-	int ticksPerBuffer = 8;
-	
-	// this initialized pd
-	// format is pd.init(numOutputChannels, numInputChannels, samplerate, ticksPerBuffer)
-	// note that outputs comes before inputs.
-	pd.init(2, 2, sampleRate, ticksPerBuffer);
-	
-	// load libs
-	expr_setup();
-	zexy_setup();
-	susloop_tilde_setup();
-	
-	// open the patch (relative to the data folder)	
-	pd.openPatch(patchName);
-	
-	// start pd
-	pd.computeAudio(true);
-	
-	pd.subscribe("delayDoppler");
-	pd.subscribe("opacityEnv");
-	pd.subscribe("loopSync");
-	pd.subscribe("index");
-	pd.addReceiver(*this);
+	if(runPdAudio)
+	{
+		// this index is the pd_index of the array in pd which works as circular buffer and it indicates the recording header
+		indexArrayFromPd=0;	
+		sampleRate = 96000;
+		// puredata works on sounds in chunks of 64 samples (called a tick)
+		// 8 ticks per buffer corresponds to 8 * 64 sample buffer size (512 samples)
+		int ticksPerBuffer = 8;
 		
-	// start the sound stream - always do this last in your setup
-	ofSoundStreamSetup(2, 2, this, sampleRate, 64*ticksPerBuffer, 1);
-	
-	// init pd object
-	pd.sendFloat("sampleRate",float(sampleRate));
-	pd.sendFloat("frameRate",30.0f);
-	pd.sendFloat("bufferSize",sampleRate * (float(durationInFrames) / fps));
-	pd.sendFloat("speed",1.0f);
-	pd.sendFloat("doppler",0.0f);
-	pd.sendFloat("delay",0.0f);
-	pd.sendFloat("feedback",0.0f);
-	pd.sendFloat("opacityOut",1.0f);
-	pd.sendFloat("in",13333.333);
-	pd.sendFloat("length",13333.333);
-	pd.sendFloat("fullGrain",0.0f);
-	pd.sendFloat("attack",0.0f);
-	pd.sendFloat("decay",0.0f);
-	pd.sendFloat("dryWet",1.0f);
-	pd.sendFloat("opacityEnvToggle",0.0f);
-	pd.sendFloat("out",0.0f);
-	pd.sendFloat("play",0.0f);
-	pd.sendFloat("rec",1.0f);
+		// this initialized pd
+		// format is pd.init(numOutputChannels, numInputChannels, samplerate, ticksPerBuffer)
+		// note that outputs comes before inputs.
+		pd.init(2, 2, sampleRate, ticksPerBuffer);
+		
+		// load external libs
+		expr_setup();
+		zexy_setup();
+		susloop_tilde_setup();
+		lrshift_tilde_setup();
+		
+		// open the patch (relative to the data folder)	
+		pd.openPatch(patchName);
+		
+		// start pd
+		pd.computeAudio(true);
+		
+		pd.subscribe("delayDoppler");
+		pd.subscribe("delayPlay");
+		pd.subscribe("levelEnvGrain");
+		pd.subscribe("levelEnvFollowIn");
+		pd.subscribe("opacityEnv");
+		pd.subscribe("index");
+		pd.addReceiver(*this);
+			
+		// start the sound stream - always do this last in your setup
+		ofSoundStreamSetup(2, 2, this, sampleRate, 64*ticksPerBuffer, 1);
+		
+		// init pd object
+		pd.sendFloat("sampleRate",float(sampleRate));
+		pd.sendFloat("frameRate",30.0f);
+		pd.sendFloat("bufferSize",sampleRate * (float(durationInFrames) / recRate));
+		pd.sendFloat("speed",1.0f);
+		pd.sendFloat("doppler",0.0f);
+		pd.sendFloat("delay",0.0f);
+		pd.sendFloat("feedback",0.0f);
+		pd.sendFloat("opacityOut",1.0f);
+		pd.sendFloat("in",(float(durationInFrames)/float(recRate))*1000.0);
+		pd.sendFloat("length",(float(durationInFrames)/float(recRate))*1000.0);
+		pd.sendFloat("fullGrain",0.0f);
+		pd.sendFloat("attackGrain",0.0f);
+		pd.sendFloat("decayGrain",0.0f);
+		pd.sendFloat("dryWet",1.0f);
+		pd.sendFloat("opacityEnvToggle",0.0f);
+		pd.sendFloat("out",0.0f);
+		pd.sendFloat("play",0.0f);
+		pd.sendFloat("rec",1.0f);
 
-	////////////////////////
-	// other stuff 
-	////////////////////////
-	
-	//ofSetVerticalSync(true);
-	ofBackground(25);
-	
+		printf("//////////////// pd object \n\n");
+		printf("pd object : bufferSize %f\n",sampleRate * (float(durationInFrames) / recRate));
+		printf("pd object : gran in and length %f\n",(float(durationInFrames)/float(recRate))*1000.0);
+		printf("//////////////// pd object \n\n");
+	}
+		
 }
 
 
 //--------------------------------------------------------------
 void testApp::update()
 {
-	ofBackground(25);
 
 	// ready array from Pd
-	pd.readArray("playmodes", arrayFromPd);
+	if((drawAudioToggle || rec) && runPdAudio) pd.readArray("playmodes", arrayFromPd);
 	
-	if(videoGrabber.isLoaded()) videoGrabber.update();
+	if(videoFileGrabber.isLoaded()) {}//videoFileGrabber.update();
 	else grabber.update();
 
 
@@ -183,73 +147,6 @@ void testApp::update()
 //--------------------------------------------------------------
 void testApp::draw(){
 	
-	//- FBO FeedBack 
-	// first we draw/calculate the feedback loop of the pipeline.
-	// the idea is to mix the rec-buffer image with the one from the header 
-	// which is multiplied by the feedback factor and put again into the buffer
-	ofBackground(0,0,0);
-	ofPushMatrix();
-	fboFeedback.begin();
-	// first draw the background
-	ofSetColor(0,255);
-	ofRect(0,0,grabberResolution.x,grabberResolution.y);
-	ofEnableAlphaBlending();
-	ofSetColor(255*opacityIn,255*opacityIn);
-	// draw the buffer on the base
-	vRendererBuffer.draw();
-	glBlendEquationEXT(GL_MAX_EXT);
-	ofSetColor(254.0*log(feedBack),254.0*log(feedBack));
-	// and the header on top
-	vRendererHeader.draw();
-	glBlendEquationEXT(GL_FUNC_ADD_EXT);
-	ofDisableAlphaBlending();
-	fboFeedback.end();
-	ofPopMatrix();
-	
-	// read pixels from fbo and put them into the buffer
-	fboFeedback.readToPixels(pixelsToBuffer);
-	vBuffer.setPixelsIn(pixelsToBuffer);
-	
-	//- FBO dryWet 
-	// now we draw the drywet part of the pipeline.
-	// the idea is to mix in a full-power cross fade curve the buffer and the header again
-	// but without "recording" the result on the buffer.
-	
-	ofPushMatrix();
-	fboA.begin();
-	// draw the background in black
-	ofSetColor(0,255);
-	ofRect(0,0,grabberResolution.x,grabberResolution.y);	
-
-	// dry - wet values
-	float dwA;
-	float dwB;
-	if(dryWet<0.5f)
-	{
-		dwA=dryWet*2.0;
-		dwB=1.0;
-	}
-	else 
-	{
-		dwB=(dryWet-1.0f)*-2.0;
-		dwA=1.0;
-	}	
-	// for the wet drt we use ADD
-	ofEnableBlendMode(OF_BLENDMODE_ADD);
-	ofSetColor(255,255*dwB);
-	// draw the buffer 
-	vRendererBuffer.draw();
-	ofSetColor(254,254*(dwA));
-	// draw the header
-	vRendererHeader.draw();
-	ofDisableBlendMode();
-	fboA.end();
-	ofPopMatrix();
-
-	//glBlendEquationEXT(GL_FUNC_ADD_EXT);
-	//ofSetColor(254.0*log(feedBack),254.0*log(feedBack));
-	
-
 	if(!fullscreen)
 	{
 		ofSetColor(255);
@@ -257,15 +154,17 @@ void testApp::draw(){
 		ofTranslate(300,20);
 		float resizeFactorX = (ofGetWidth()-320.0f-20.0f)/3.0f;
 		float resizeFactorY = ((ofGetWidth()-320.0f-20.0f)/grabberAspectRatio)/3.0f;
-		vRendererBuffer.draw(0,0,resizeFactorX,resizeFactorY);
+		vRendererGrabber.draw(0,0,resizeFactorX,resizeFactorY);
+		vRendererBuffer.draw(0,20+resizeFactorY,resizeFactorX,resizeFactorY);
+		vRendererHeader.draw(0,20+20+resizeFactorY*2,resizeFactorX,resizeFactorY);
 		ofPopMatrix();
+
 		ofPushMatrix();
 		ofTranslate(320.0+resizeFactorX,20.0f);
-		//ofSetColor(vHeader.getOpacity(),vHeader.getOpacity(),vHeader.getOpacity());
-		//vRendererHeader.draw(0,0,resizeFactorX*2.0f,resizeFactorY*2.0f);
 		ofSetColor(opacityOut*255);
-		fboA.draw(0,0,resizeFactorX*2.0f,resizeFactorY*2.0f);
+		vRendererFinal.draw(0,0,resizeFactorX*2.0f,resizeFactorY*2.0f);
 		ofPopMatrix();
+			
 	}
 	else 
 	{
@@ -274,61 +173,50 @@ void testApp::draw(){
 		float screenAspectRatio = float(ofGetWidth()) / float(ofGetHeight());
 		if (screenAspectRatio>grabberAspectRatio) 
 		{
-			vRendererHeader.draw((ofGetWidth()-ofGetHeight()*grabberAspectRatio)/2,0,ofGetHeight()*grabberAspectRatio,ofGetHeight());
+			vRendererFinal.draw((ofGetWidth()-ofGetHeight()*grabberAspectRatio)/2,0,ofGetHeight()*grabberAspectRatio,ofGetHeight());
 		}
 		else 
 		{
-			vRendererHeader.draw(0,0,ofGetWidth(),ofGetWidth()/grabberAspectRatio);
+			vRendererFinal.draw(0,0,ofGetWidth(),ofGetWidth()/grabberAspectRatio);
 		}
+	}
+	if(drawBufferToggle)
+	{		
+		vBuffer.draw();
+		vHeader.draw();
 	}
 	if(showGUI)
 	{
-		vBuffer.draw();
-		vHeader.draw();
-		if(drawAudioToggle) drawPdBuffer();
-		gui.draw();
+		if(drawAudioToggle && runPdAudio) drawPdBuffer();
+		controlPanel.draw();
+		configPanel.draw();
+		levelsPanel.draw();
+		grainPanel.draw();
+		envFollowPanel.draw();
+		
 		if(pd.isInited())
 			ofSetColor(128);
 		else 
 			ofSetColor(128,0,0);
 		
-		ofDrawBitmapString(patchName + "  ||  " + ofToString(int(ofGetFrameRate()))
-						   + " fps "
-						   + " || recRate " + ofToString(vBuffer.getRealFPS()) + " fps"
-						   ,20,ofGetHeight()-30);
-		ofDrawBitmapString(vHeader.getInfo(),20,ofGetHeight()-10);
-		
+		ofDrawBitmapString(vHeader.getInfo(),20,ofGetHeight()-20);
 	}
-	
-	// draw thumbnails of the graphic flow
-	if(drawHelp)
-	{
-		
-		ofSetColor(255);
-		ofPushMatrix();
-		ofTranslate(20, 500,0);
-		ofScale(0.25,0.25,0.25);
-		vRendererBuffer.draw();
-		ofTranslate(640,0,0);
-		vRendererHeader.draw();
-		fboFeedback.draw(640,0);
-		fboA.draw(1280,0);
-		ofPopMatrix();
-		ofSetColor(0,255,0);
-		ofDrawBitmapString("grabber",20,480);
-		ofDrawBitmapString("header",20+160,480);
-		ofDrawBitmapString("fboFeedBack",20+160*2,480);
-		ofDrawBitmapString("fboDryWet",20+160*3,480);
-	}
-	
-	//	ofSetColor(0,0,128);
-	//	ofCircle(PMDRAWSPACING + ((ofGetWidth()-PMDRAWSPACING)*(float(indexArrayFromPd)/float(1280000))),ofGetHeight(),20);
+
+	// draw FPS indicator
+	ofSetColor(0,255,0);
+	ofDrawBitmapString(patchName + "  ||  " + ofToString(int(ofGetFrameRate()))
+					   + " fps "
+					   + " || recRate " + ofToString(vBuffer.getRealFPS()) + " fps"
+					   ,20,ofGetHeight()-35);
 	
 }
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
 
 	printf("key %d\n",key);
+	string presetNum = "";
+	int loadOrSave = -1;
+	
 	if(key=='s') grabber.videoSettings();
 	else if(key=='f') 
 	{
@@ -339,7 +227,7 @@ void testApp::keyPressed(int key){
 	}
 	else if(key=='h') 
 	{
-		if (fullscreen) showGUI=!showGUI;
+		showGUI=!showGUI;
 	}
 	else if(key==OF_KEY_F1) 
 	{
@@ -353,95 +241,124 @@ void testApp::keyPressed(int key){
 	///////////////
 	else if (key=='1')
 	{
-		gui.loadFromFile("1.xml");
-		presetLabel = ofToString("preset : 1.xml");
+		loadOrSave = 1;
+		presetNum = "1"; 
 	}
 	else if (key=='!')
 	{
-		gui.saveToFile("1.xml");
+		loadOrSave = 2;
+		presetNum = "1"; 
 	}
 	else if (key=='2')
 	{
-		gui.loadFromFile("2.xml");
-		presetLabel = ofToString("preset : 2.xml");
+		loadOrSave = 1;
+		presetNum = "2"; 
 	}
 	else if (key=='"')
 	{
-		gui.saveToFile("2.xml");
+		loadOrSave = 2;
+		presetNum = "2"; 
 	}
 	else if (key=='3')
 	{
-		gui.loadFromFile("3.xml");
-		presetLabel = ofToString("preset : 3.xml");
+		loadOrSave = 1;
+		presetNum = "3"; 
 	}
 	else if (key==183)
 	{
-		gui.saveToFile("3.xml");
+		loadOrSave = 2;
+		presetNum = "3"; 
 	}
 	else if (key=='4')
 	{
-		gui.loadFromFile("4.xml");
-		presetLabel = ofToString("preset : 4.xml");
+		loadOrSave = 1;
+		presetNum = "4"; 
 	}
 	else if (key=='$')
 	{
-		gui.saveToFile("4.xml");
+		loadOrSave = 2;
+		presetNum = "4"; 
 	}
 	else if (key=='5')
 	{
-		gui.loadFromFile("5.xml");
-		presetLabel = ofToString("preset : 5.xml");
+		loadOrSave = 1;
+		presetNum = "5"; 
 	}
 	else if (key=='%')
 	{
-		gui.saveToFile("5.xml");
+		loadOrSave = 2;
+		presetNum = "5"; 
 	}
 	else if (key=='6')
 	{
-		gui.loadFromFile("6.xml");
-		presetLabel = ofToString("preset : 6.xml");
+		loadOrSave = 1;
+		presetNum = "6"; 
 	}
 	else if (key=='&')
 	{
-		gui.saveToFile("6.xml");
+		loadOrSave = 2;
+		presetNum = "6"; 
 	}
 	else if (key=='7')
 	{
-		gui.loadFromFile("7.xml");
-		presetLabel = ofToString("preset : 7.xml");
+		loadOrSave = 1;
+		presetNum = "7"; 
 	}
 	else if (key=='/')
 	{
-		gui.saveToFile("7.xml");
+		loadOrSave = 2;
+		presetNum = "7"; 
 	}
 	else if (key=='8')
 	{
-		gui.loadFromFile("8.xml");
-		presetLabel = ofToString("preset : 8.xml");
+		loadOrSave = 1;
+		presetNum = "8"; 
 	}
 	else if (key=='(')
 	{
-		gui.saveToFile("8.xml");
+		loadOrSave = 2;
+		presetNum = "8"; 
 	}
 	else if (key=='9')
 	{
-		gui.loadFromFile("9.xml");
-		presetLabel = ofToString("preset : 9.xml");
+		loadOrSave = 1;
+		presetNum = "9"; 
 	}
 	else if (key==')')
 	{
-		gui.saveToFile("9.xml");
+		loadOrSave = 2;
+		presetNum = "9"; 
 	}
 	else if (key=='0')
 	{
-		gui.loadFromFile("0.xml");
-		presetLabel = ofToString("preset : 0.xml");
+		loadOrSave = 1;
+		presetNum = "0"; 
 	}
-	else if (key==')')
+	else if (key=='=')
 	{
-		gui.saveToFile("0.xml");
+		loadOrSave = 2;
+		presetNum = "0"; 
 	}
 	
+	// load or save preset 
+	if (loadOrSave==1)
+	{
+		configPanel.loadFromFile("./presets/configPanel_" +presetNum +".xml");
+		levelsPanel.loadFromFile("./presets/levelsPanel_"+presetNum +".xml");
+		grainPanel.loadFromFile("./presets/grainPanel_"+presetNum +".xml");
+		controlPanel.loadFromFile("./presets/controlPanel_"+presetNum +".xml");
+		envFollowPanel.loadFromFile("./presets/envFollowPanel_"+presetNum +".xml");
+		presetLabel = ofToString("preset : "+ presetNum);
+		
+	}
+	else if (loadOrSave==2)
+	{
+		configPanel.saveToFile("./presets/configPanel_"+presetNum +".xml");
+		levelsPanel.saveToFile("./presets/levelsPanel_"+presetNum +".xml");
+		grainPanel.saveToFile("./presets/grainPanel_"+presetNum +".xml");
+		envFollowPanel.saveToFile("./presets/envFollowPanel_"+presetNum +".xml");
+		controlPanel.saveToFile("./presets/controlPanel_" + presetNum +".xml");		
+	}
 	
 }
 
@@ -452,6 +369,7 @@ void testApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void testApp::mouseMoved(int x, int y ){
+	
 
 }
 
@@ -483,38 +401,175 @@ void testApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void testApp::dragEvent(ofDragInfo dragInfo){ 
 	
+	/*
+
+	 grabber.setDesiredFrameRate(30);
+	 grabber.setFps(30);	
+	 grabber.initGrabber(grabberResolution.x,grabberResolution.y);
+	 
+	 //vRate.setup(grabber,fps);
+	 
+	 vBuffer.setup(vRate,durationInFrames, false);
+	 
+	 vHeader.setup(vBuffer);
+	 vHeader.setDelayMs(delay);
+	 vHeader.setInMs(in);
+	 vHeader.setOutMs(out);
+	 vHeader.setLengthMs(13333.0);	
+	 vHeader.setWindowPriority("length");
+	 
+	 vFeedback.setup(grabber,vHeader);
+	 vFeedback.setFeedback(feedBack);
+	 vFeedback.setInputOpacity(opacityIn);
+	 vRate.setup(vFeedback,fps);
+	 
+	 vDryWet.setup(vFeedback ,vHeader);
+	 vDryWet.setDryWet(dryWet);
+	 
+	 vRendererBuffer.setup(grabber);
+	 vRendererHeader.setup(vDryWet);
+	 
+	 
+	 */	
 	
 	
-	videoGrabber.loadMovie(dragInfo.files[0]);
-	durationInFrames = videoGrabber.getTotalNumFrames();
-	grabberResolution = ofVec2f(videoGrabber.getWidth(),videoGrabber.getHeight());
+	/* 
+	 
+	 NEW BUT BAD
+	 
+	videoFileGrabber.loadMovie(dragInfo.files[0]);
+	durationInFrames = videoFileGrabber.getTotalNumFrames();
+	grabberResolution = ofVec2f(videoFileGrabber.getWidth(),videoFileGrabber.getHeight());
 	grabberAspectRatio = grabberResolution.x / grabberResolution.y;
-	fboA.allocate(grabberResolution.x, grabberResolution.y,GL_RGB,0);
-	fboFeedback.allocate(grabberResolution.x, grabberResolution.y,GL_RGB,0);
-	pixelsToBuffer.allocate(grabberResolution.x, grabberResolution.y,OF_PIXELS_RGB);
-		
+
+	printf("videoFileGrabber:: dragged movie %s . DurationInFrames %d \n",dragInfo.files[0].c_str(),durationInFrames);
+
+	
+	vHeader.setup(vBuffer);
 	vHeader.setDelayMs(0.0f);
-	vHeader.setLengthMs(videoGrabber.getDuration()*1000.0);
-	vHeader.setInMs(videoGrabber.getDuration()*1000.0);
+	vHeader.setInMs(videoFileGrabber.getDuration()*1000.0);
+	vHeader.setOutMs(out);
+	vHeader.setLengthMs(videoFileGrabber.getDuration()*1000.0);	
+	vHeader.setWindowPriority("length");
+	
+	vBuffer.stop();
+	vRate.removeListener();
+
+	vBuffer.setup(videoFileGrabber,durationInFrames);
+	vBuffer.resume();
+	
+	vFeedback.setup(grabber,vHeader);
+//	vFeedback.setFeedback(feedBack);
+//	vFeedback.setInputOpacity(opacityIn);
+//	vRate.setup(vFeedback,fps);
+	
+//	vDryWet.setup(vFeedback ,vHeader);
+//	vDryWet.setDryWet(dryWet);
+	
+	vRendererBuffer.setup(grabber);
+	vRendererHeader.setup(vDryWet);
+	
+	for(int i=0;i<durationInFrames;i++){
+		printf("-%d",i);
+		videoFileGrabber.setFrame(i);
+		VideoFrame videoFrame = VideoFrame::newVideoFrame(videoFileGrabber.getPixelsRef());
+		videoFrame.getTextureRef();
+		vBuffer.newVideoFrame(videoFrame);
+	}	
+	
+	*/
+	
+	
+///* old but good  2 *****************
+ 
+/*
+	videoFileGrabber.loadMovie(dragInfo.files[0]);
+	durationInFrames = videoFileGrabber.getTotalNumFrames();
+	grabberResolution = ofVec2f(VideoSource(videoFileGrabber).getWidth(),VideoSource::videoFileGrabber.getHeight());
+	grabberAspectRatio = grabberResolution.x / grabberResolution.y;
+*/			
+	vRate.removeListener();
+	vFeedback.removeListener();
+	vDryWet.removeListener();
+	
+	vBuffer.stop();
+	rec=false;
+	vBuffer.setup(videoFileGrabber,durationInFrames);
+
+	//vBuffer.setInSource(vHeader);
+	vHeader.setup(vBuffer);
+	vHeader.setDelayMs(0.0f);
+	vHeader.setLengthMs(videoFileGrabber.getDuration()*1000.0);
+	vHeader.setInMs(videoFileGrabber.getDuration()*1000.0);
+	//	vHeader.setOutMs(out);
+	vHeader.setWindowPriority("length");
+
+	//vDryWet.setup(vHeader,videoFileGrabber);
+	//vDryWet.setDryWet(dryWet);
+
+	vRendererBuffer.setup(videoFileGrabber);
+	vRendererFinal.setup(vHeader);
+		
+	for(int i=0;i<200;i++)
+	{
+		videoFileGrabber.setFrame(i);
+		VideoFrame videoFrame = VideoFrame::newVideoFrame(videoFileGrabber.getPixelsRef());
+		videoFrame.getTextureRef();
+		vBuffer.newVideoFrame(videoFrame);
+	}	
+	
+
+//****************** */
+	
+	
+	/*
+	//old but good *****************
+	
+	//	fboA.allocate(grabberResolution.x, grabberResolution.y,GL_RGB,0);
+	//	fboFeedback.allocate(grabberResolution.x, grabberResolution.y,GL_RGB,0);
+	//	pixelsToBuffer.allocate(grabberResolution.x, grabberResolution.y,OF_PIXELS_RGB);
+	
+	videoFileGrabber.loadMovie(dragInfo.files[0]);
+	durationInFrames = videoFileGrabber.getTotalNumFrames();
+	grabberResolution = ofVec2f(videoFileGrabber.getWidth(),videoFileGrabber.getHeight());
+	grabberAspectRatio = grabberResolution.x / grabberResolution.y;
+	
+	
+	vHeader.setDelayMs(0.0f);
+	vHeader.setLengthMs(videoFileGrabber.getDuration()*1000.0);
+	vHeader.setInMs(videoFileGrabber.getDuration()*1000.0);
 	//	vHeader.setOutMs(out);
 	vHeader.setWindowPriority("length");
 	vBuffer.stop();
 	vRate.removeListener();
 	
-	vBuffer.setup(videoGrabber,durationInFrames);
+	vBuffer.setup(videoFileGrabber,durationInFrames);
 	vBuffer.resume();
-	vBuffer.setInSource(vHeader);
+	//vBuffer.setInSource(vHeader);
 	vHeader.setup(vBuffer);
-	vRendererBuffer.setup(videoGrabber);
+	vRendererBuffer.setup(videoFileGrabber);
 	vRendererHeader.setup(vHeader);
 	
+	//videoFileGrabber.play();
+	
+	for(int i=0;i<200;i++)
+	{
+		videoFileGrabber.setFrame(i);
+		VideoFrame videoFrame = VideoFrame::newVideoFrame(videoFileGrabber.getPixelsRef());
+		videoFrame.getTextureRef();
+		vBuffer.newVideoFrame(videoFrame);
+	}	
 	
 	
-	videoGrabber.play();
-
+	
 	//vBuffer.setPixelsIn(pixelsToBuffer);
-
-	printf("dragEvent : file %s [%d frames] [duration %f]\n",dragInfo.files[0].c_str(),durationInFrames,videoGrabber.getDuration()*1000.0);
+	
+	//****************** */
+	
+	
+	
+	
+	printf("dragEvent : file %s [%d frames] [duration %f]\n",dragInfo.files[0].c_str(),durationInFrames,videoFileGrabber.getDuration()*1000.0);
 	pd.sendSymbol("videoFileName",dragInfo.files[0]);
 
 
@@ -542,21 +597,28 @@ void testApp::receiveFloat(const std::string& dest, float value)
 		vHeader.setDelayMs(value/(sampleRate/1000.0f));
 		printf("received from pd> delayDoppler!!\n");		
 	}
-	else if(dest=="opacityEnv") 
+	else if(dest=="levelEnvGrain") 
 	{
 //		if(opacityEnvToggle) opacityIn=value*10.0;
-		if(opacityEnvToggle) dryWet=((1.0f-dryWetAlpha)*dryWet)+(dryWetAlpha*value*10.0);
-		if(dryWet>1.0) dryWet=1.0;
-		printf("received from pd> opacityOut!!\n");		
+		//if(opacityEnvToggle) dryWet=((1.0f-dryWetAlpha)*dryWet)+(dryWetAlpha*value*10.0);
+		//if(dryWet>1.0) dryWet=1.0;
+		opacityOut=value;
+		printf("received from pd> levelEnvGrain!!\n");		
 	}
-	else if(dest=="loopSync")
+//	else if(dest=="levelEnvFollowIn")
+		else if(dest=="opacityEnv")
 	{
-		vHeader.setLoopToStart();
-		printf("received from pd> loopSync!!\n");
+		opacityIn=value;
 	}
 	else if(dest=="index")
 	{
 		/*if(!play)*/ indexArrayFromPd = int(value);
+	}
+	else if(dest=="delayPlay")
+	{
+		//vHeader.setDelayMs(value/(sampleRate/1000.0f));
+		vHeader.setDelayMs(value);
+		printf("received from pd > delayPlay %f\n",value/(sampleRate/1000.0f));
 	}
 }
 
@@ -624,7 +686,6 @@ void testApp::drawPdBuffer()
 			
 		}
 	}
-
 	// draw the wav
 	ofEnableAlphaBlending();
 	ofSetColor(0,150,255,200);
@@ -644,14 +705,14 @@ void testApp::drawPdBuffer()
 void testApp::inChanged(float &f)
 {
 	vHeader.setInMs(f);
-	pd.sendFloat("in",vHeader.getIn());
+	pd.sendFloat("in",f);
 	printf("> in changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::outChanged(float &f)
 {
 	vHeader.setOutMs(f);
-	pd.sendFloat("out",vHeader.getOut());
+	pd.sendFloat("out",f);
 	printf("> out changed to %f\n",f);
 
 }
@@ -659,7 +720,7 @@ void testApp::outChanged(float &f)
 void testApp::lengthChanged(float &f)
 {
 	vHeader.setLengthMs(f);
-	pd.sendFloat("length",vHeader.getLength());
+	pd.sendFloat("length",f);
 	printf("> length changed to %f\n",f);
 }
 //--------------------------------------------------------------
@@ -674,13 +735,14 @@ void testApp::speedChanged(float &f)
 {
 	vHeader.setSpeed(f);
 	pd.sendFloat("speed",f);
-	printf("> speed changed to %f\n",f);
+ 	printf("> speed changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::feedBackChanged(float &f)
 {
 	pd.sendFloat("feedBack",f);
-	vBuffer.setFeedBack(f);
+	//vBuffer.setFeedBack(f);
+	vFeedback.setFeedback(feedBack);
 	printf("> feedback changed to %f\n",f);
 }
 //--------------------------------------------------------------
@@ -701,24 +763,30 @@ void testApp::opacityInChanged(float &f)
 //		vHeader.setOpacity(int(f*255.0));
 		printf("> opacity in changed to %f\n",f);
 //	}
-	
+	vFeedback.setInputOpacity(opacityIn);
+
 }
 //--------------------------------------------------------------
-void testApp::attackChanged(float &f)
+void testApp::attackGrainChanged(float &f)
 {
-	pd.sendFloat("attack",f);
+	pd.sendFloat("grainAttack",f);
+	vHeader.setAttack(f);
+
 	printf(">attack changed to %f\n",f);
 }
 //--------------------------------------------------------------
-void testApp::decayChanged(float &f)
+void testApp::decayGrainChanged(float &f)
 {
-	pd.sendFloat("decay",f);
+	pd.sendFloat("grainDecay",f);
+	vHeader.setDecay(f);
+	
 	printf(">decay changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::dryWetChanged(float &f)
 {
 	pd.sendFloat("dryWet",f);
+	vDryWet.setDryWet(dryWet);
 	printf(">dryWet changed to %f\n",f);
 }
 
@@ -726,10 +794,10 @@ void testApp::dryWetChanged(float &f)
 //--------------------------------------------------------------
 // int change's
 //--------------------------------------------------------------
-void testApp::fpsChanged(int &i)
+void testApp::recRateChanged(int &i)
 {
 	vRate.setFps(i);
-	printf(">fps changed to %d\n",i);
+	printf(">recRate changed to %d\n",i);
 
 }
 //--------------------------------------------------------------
@@ -743,6 +811,13 @@ void testApp::scratchFactorChanged(int &i)
 {
 	pd.sendFloat("doppler",i);
 	printf(">scratch factor changed to %d\n",i);
+}
+//--------------------------------------------------------------
+void testApp::loopTypeChanged(int &i)
+{
+	pd.sendFloat("loopType",i);
+	vHeader.setLoopMode(i);
+	printf(">loopTypeChanged to %d\n",i);
 }
 
 //--------------------------------------------------------------
@@ -770,6 +845,7 @@ void testApp::playChanged(bool &b)
 {
 	if(b) {
 		vHeader.setPlaying(true);
+		vHeader.setDriveMode(1);
 		pd.sendFloat("play",1.0);
 		printf("> play changed to 1.0\n");
 		
@@ -778,6 +854,8 @@ void testApp::playChanged(bool &b)
 	{
 		vHeader.setPlaying(false);
 		vHeader.setDelayMs(delay);
+		vHeader.setDriveMode(0);
+
 		pd.sendFloat("play",0.0);
 		printf("> play changed to 0.0\n");
 	}	
@@ -787,9 +865,19 @@ void testApp::drawAudioChanged(bool &b)
 {
 }
 //--------------------------------------------------------------
+void testApp::drawBufferChanged(bool &b)
+{
+}
+//--------------------------------------------------------------
+void testApp::keepDurationToggleChanged(bool &b)
+{
+	pd.sendFloat("keepDuration",0.0f);
+}
+
+//--------------------------------------------------------------
 void testApp::fullGrainChanged(bool &b)
 {
-	if(fullGrain)
+	if(b)
 	{
 		pd.sendFloat("fullGrain",1.0f);
 		printf("> full grain changed to 1.0\n");
@@ -804,7 +892,7 @@ void testApp::fullGrainChanged(bool &b)
 void testApp::opacityEnvToggleChanged(bool &b)
 {
 	
-	if(!opacityEnvToggle)
+	if(!b)
 	{
 		pd.sendFloat("opacityEnvToggle",1.0f);
 		printf("> oppacity Env Toggle changed to 1.0\n");
@@ -831,3 +919,107 @@ void testApp::grabberSettingsToggleChanged(bool &b)
 
 }
 
+//-------------------------------------------------------------
+void testApp::playAudioFrameToggleChanged(bool &b)
+{
+	printf("> play audio frame changed \n");
+	
+	if (b) pd.sendFloat("levelsPlayAudioFrame",1.0f);
+	else pd.sendFloat("levelsPlayAudioFrame",0.0f);
+	
+}
+//-------------------------------------------------------------
+void testApp::timeStretchToggleChanged(bool &b)
+{
+	printf("> time stretch changed \n");
+	
+	if (b) pd.sendFloat("controlTimeStretch",1.0f);
+	else pd.sendFloat("controlTimeStretch",0.0f);
+	
+}
+
+
+//-------------------------------------------------------------
+void testApp::setupGUI()
+{
+
+	////////////////////
+	// ofxGUI
+	////////////////////
+	controlPanel.setup("CONTROL",		"./defaultSettings/controlSettings.xml",10,10);
+	configPanel.setup("CONFIG",			"./defaultSettings/configSettings.xml", 300,20+240);
+	levelsPanel.setup("LEVELS",			"./defaultSettings/levelsSettings.xml", 300, 20+240+120);
+	grainPanel.setup("GRAIN",			"./defaultSettings/grainSettings.xml", 10, 20+240+120);
+	envFollowPanel.setup("ENV_FOLLOW",	"./defaultSettings/envFollowSettings.xml", 10, 20+140+120);	
+
+	controlPanel.loadFromFile("./defaultSettings/controlSettings.xml");
+	configPanel.loadFromFile("./defaultSettings/configSettings.xml");
+	levelsPanel.loadFromFile("./defaultSettings/levelsSettings.xml");
+	grainPanel.loadFromFile("./defaultSettings/grainSettings.xml");
+	envFollowPanel.loadFromFile("./defaultSettings/envFollowSettings.xml");
+
+	controlPanel.add(presetLabel.setup			(ofToString("presetLabel"),patchName + ofToString(" :: none")));
+	controlPanel.add(rec.setup					("rec?",true));
+	controlPanel.add(play.setup					("play?",false));
+	controlPanel.add(speed.setup				("speed",1.0,-4.0,4.0));
+	controlPanel.add(delay.setup				("delay ms",0.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
+	controlPanel.add(scratchFactor.setup		("scratch factor",0.0,0.0,4000.0));
+	controlPanel.add(timeStretchToggle.setup	("time stretch?",false));
+	
+	envFollowPanel.add(opacityEnvToggle.setup	("opacity env?",false));
+	
+	configPanel.add(recRate.setup				("rec at fps",30,1,200));
+	configPanel.add(avSyncOffset.setup			("av-sync offset",0,-50,50));
+	configPanel.add(drawAudioToggle.setup		("draw audio?",true));	
+	configPanel.add(drawBufferToggle.setup		("draw buffer?",true));
+	configPanel.add(grabberSettingsToggle.setup	("grabber settings",false));		
+	
+	levelsPanel.add(opacityIn.setup				("level in",1.0,0.0,1.0));
+	levelsPanel.add(opacityOut.setup			("level out",1.0,0.0,1.0));
+	levelsPanel.add(feedBack.setup				("feedBack",0.0,0.0,1.0));
+	levelsPanel.add(dryWet.setup				("dry / wet",1.0,0.0,1.0));
+	levelsPanel.add(playAudioFrameToggle.setup	("play audio frame?",false));	
+	
+	grainPanel.add(length.setup					("length ms",(float(durationInFrames)/float(recRate))*1000.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
+	grainPanel.add(in.setup						("in ms",(float(durationInFrames)/float(recRate))*1000.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
+	grainPanel.add(out.setup					("out ms",0.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
+	grainPanel.add(attackGrain.setup			("attack grain",0.0,0.0,2000.0));
+	grainPanel.add(decayGrain.setup				("decay grain",0.0,0.0,2000.0));
+	grainPanel.add(fullGrain.setup				("play full grain?",false));
+	grainPanel.add(keepDurationToggle.setup		("keep duration?",false));
+	grainPanel.add(loopType.setup				("loopType",3,1,3));
+	
+	////////////////////
+	// - add listener's for events.	
+	////////////////////
+	controlPanel.getFloatSlider("delay ms").addListener(this,&testApp::delayChanged);
+	controlPanel.getFloatSlider("speed").addListener(this,&testApp::speedChanged);
+	controlPanel.getIntSlider("scratch factor").addListener(this,&testApp::scratchFactorChanged);	
+	controlPanel.getToggle("rec?").addListener(this,&testApp::recChanged);	
+	controlPanel.getToggle("play?").addListener(this,&testApp::playChanged);	
+	controlPanel.getToggle("time stretch?").addListener(this,&testApp::timeStretchToggleChanged);	
+	
+	envFollowPanel.getToggle("opacity env?").addListener(this,&testApp::opacityEnvToggleChanged);	
+	
+	grainPanel.getFloatSlider("in ms").addListener(this,&testApp::inChanged);
+	grainPanel.getFloatSlider("out ms").addListener(this,&testApp::outChanged);
+	grainPanel.getFloatSlider("length ms").addListener(this,&testApp::lengthChanged);
+	grainPanel.getFloatSlider("attack grain").addListener(this,&testApp::attackGrainChanged);
+	grainPanel.getFloatSlider("decay grain").addListener(this,&testApp::decayGrainChanged);
+	grainPanel.getIntSlider("loopType").addListener(this,&testApp::loopTypeChanged);	
+	grainPanel.getToggle("play full grain?").addListener(this,&testApp::fullGrainChanged);	
+	grainPanel.getToggle("keep duration?").addListener(this,&testApp::keepDurationToggleChanged);	
+	
+	levelsPanel.getFloatSlider("feedBack").addListener(this,&testApp::feedBackChanged);
+	levelsPanel.getFloatSlider("level in").addListener(this,&testApp::opacityInChanged);
+	levelsPanel.getFloatSlider("level out").addListener(this,&testApp::opacityOutChanged);
+	levelsPanel.getFloatSlider("dry / wet").addListener(this,&testApp::dryWetChanged);
+	levelsPanel.getToggle("play audio frame?").addListener(this,&testApp::playAudioFrameToggleChanged);
+	
+	configPanel.getIntSlider("rec at fps").addListener(this,&testApp::recRateChanged);
+	configPanel.getIntSlider("av-sync offset").addListener(this,&testApp::avSyncOffsetChanged);
+	configPanel.getToggle("draw audio?").addListener(this,&testApp::drawAudioChanged);	
+	configPanel.getToggle("draw buffer?").addListener(this,&testApp::drawBufferChanged);	
+	configPanel.getToggle("grabber settings").addListener(this,&testApp::grabberSettingsToggleChanged);	
+	
+}

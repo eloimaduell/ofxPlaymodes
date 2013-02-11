@@ -22,10 +22,12 @@ public:
 	
 	int width;
 	int height;
+	
 	void setWidth(int w);
 	void setHeigth(int h);
-	int getResolutionX();
-	int getResolutionY();
+	
+	int getWidth();
+	int getHeight();
 };
 }
 #endif /* VIDEOSOURCE_H_ */

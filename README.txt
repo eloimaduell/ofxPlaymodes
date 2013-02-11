@@ -8,3 +8,9 @@ Still in development ! Find the bugs !!
 
 info@playmodes.com
 
+* example_PM3 : for testing the graphic pipeline (openGL)
+* example_PM3_PD : for testing the audiovisual pipeline (openGL + Pdata)
+
+CHANGES 
+///////
+* VideoFrames are saved as Pixels and just converted to ofTexture on draw. For such change, we introduced ofPBO and ofFastFBORead.

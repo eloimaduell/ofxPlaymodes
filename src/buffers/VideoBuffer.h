@@ -59,7 +59,7 @@ public:
 	Timestamp getInitTime();                      // time of the first frame in the recording
 
     long getTotalFrames();                          // total frames since the beginning of the recording
-	float getRealFPS();                             // aprox fps from source
+	double getRealFPS();                             // aprox fps from source
 	//int currentPos;                                 // currentPos in the buffer
 
 	void draw();                                    // draws the stats of the buffer
@@ -82,7 +82,7 @@ protected:
     unsigned int maxSize;
     int framesOneSec;
     int64_t microsOneSec;
-    int realFps;
+    double realFps;
 };
 }
 #endif /* VIDEOBUFFER_H_ */
