@@ -13,6 +13,7 @@
 #include "FileGrabber.h"
 #include "ofxGui.h"
 #include "ofxPd.h"
+#include "pmThreadedOscReceiver.h"
 
 // pd externals ----------------------
 
@@ -60,7 +61,7 @@ public:
 	bool						showGUI;
 	bool						fullscreen;
 	std::vector<ofVec2f>		arrayForDrawAudio;
-	
+	bool						pmVerbose;
 	////////////////////
 	// ofxPlaymodes
 	///////////////////
@@ -73,6 +74,7 @@ public:
 	ofxPm::VideoFeedbackPixelsGPU	vFeedback;
 	ofxPm::VideoDryWetPixelsGPU		vDryWet;
 
+	float						grabFPS;
 	int							durationInFrames;
 	ofVec2f						grabberResolution;
 	float						grabberAspectRatio;
@@ -102,6 +104,8 @@ public:
 	ofxFloatSlider	decayGrain;	
 	ofxFloatSlider	dryWet;	
 	ofxFloatSlider	pitch;
+	ofxFloatSlider	levelEnvMultiplyer;
+	ofxFloatSlider	controlPitchStretch;
 	
 	ofxToggle		rec;
 	ofxToggle		play;
@@ -113,6 +117,7 @@ public:
 	ofxToggle		playAudioFrameToggle;
 	ofxToggle		timeStretchToggle;
 	ofxToggle		keepDurationToggle;
+	ofxToggle		verbose;
 	
 	ofxIntSlider	scratchFactor;
 	ofxIntSlider	drawAudioResolution;
@@ -137,6 +142,8 @@ public:
 	void decayGrainChanged(float &f);
 	void delayChanged(float &f);
 	void dryWetChanged(float &f);
+	void levelEnvMultiplyerChanged(float &f);
+	void controlPitchStretchChanged(float &f);
 	
 	// changed int's
 	////////////////////
@@ -157,10 +164,12 @@ public:
 	void playAudioFrameToggleChanged(bool &b);
 	void timeStretchToggleChanged(bool &b);
 	void keepDurationToggleChanged(bool &b);
+	void verboseToggleChanged(bool &b);
 	
 	////////////////////
 	// ofxPd
 	////////////////////
+	ofSoundStream soundStream;
 	
 	int sampleRate;
 	// the puredata instance
@@ -176,6 +185,15 @@ public:
 
 	void receiveFloat(const std::string& dest, float value);
 
+	
+	////////////////////
+	// OSC stuff
+	////////////////////
+	void newOscMessageReceived(pmOscMessage &f);
+	pmThreadedOscReceiver	oscReceiver;
+	
+	
+	
 	
 	ofFbo		fboA;
 	ofFbo		fboFeedback;

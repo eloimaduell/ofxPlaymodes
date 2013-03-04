@@ -1,4 +1,4 @@
-/*
+ /*
  * AudioFrame.h
  *
  *  Created on: 09-oct-2008
@@ -273,8 +273,8 @@ int VideoHeader::getNextPosition(){
 				backpos=CLAMP(backpos,0,buffer_size-1);
 				nextPos= (buffer_size-1) - backpos;
 			}
-			nextPos = CLAMP(nextPos,0,buffer_size-1);
-			return nextPos+offsetFrames;
+			nextPos = CLAMP(nextPos+offsetFrames,0,buffer_size-1);
+			return nextPos;
 		
 			break;
 			
@@ -285,8 +285,8 @@ int VideoHeader::getNextPosition(){
 
 			// position driven by audio trough calls to delay !!
 			nextPos= int(buffer_size-1) - int(double(delay)/double(oneFrame));
-			nextPos = CLAMP(nextPos,0,buffer_size-1);
-			return nextPos-offsetFrames;
+			nextPos = CLAMP(nextPos+offsetFrames,0,buffer_size-1);
+			return nextPos;
 			
 			break;
 		default:

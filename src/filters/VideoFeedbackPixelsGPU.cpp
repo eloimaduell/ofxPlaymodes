@@ -85,9 +85,15 @@ VideoFrame VideoFeedbackPixelsGPU::getNextVideoFrame(){
 }
 
 void VideoFeedbackPixelsGPU::newVideoFrame(VideoFrame & frame){
-	//front = VideoFrame::newVideoFrame(frame);
 
 	if(source2->getNextVideoFrame()==NULL){
+		ofNotifyEvent(newFrameEvent,front);
+		return;
+	}
+	
+	if(feedback==0.0)
+	{
+		front = VideoFrame::newVideoFrame(frame);
 		ofNotifyEvent(newFrameEvent,front);
 		return;
 	}

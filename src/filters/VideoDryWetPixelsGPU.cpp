@@ -90,6 +90,21 @@ void VideoDryWetPixelsGPU::newVideoFrame(VideoFrame & frame){
 		ofNotifyEvent(newFrameEvent,front);
 		return;
 	}
+	// try to avoid the use of pbo in case we're in this 2 special cases where
+	// no need to use the pbo's, shader, fbo ... 
+	if((dryWetA==1.0) && (dryWetB==0.0))
+	{
+		front = VideoFrame::newVideoFrame(frame); 
+		ofNotifyEvent(newFrameEvent,front);
+		
+		return;
+	}
+	else if ((dryWetA==0.0) && (dryWetB==1.0))
+	{
+		front = VideoFrame::newVideoFrame(source2->getNextVideoFrame()); 
+		ofNotifyEvent(newFrameEvent,front);
+		return;		
+	}
 
 	// pbo1 load data from source1 through frame param.
 	pbo1.loadData(frame.getPixelsRef());
@@ -101,19 +116,19 @@ void VideoDryWetPixelsGPU::newVideoFrame(VideoFrame & frame){
 
 	fbo.begin();
 	shader.begin();
-	shader.setUniformTexture("tex0",frame.getTextureRef(),0);
-	shader.setUniformTexture("tex1",source2->getNextVideoFrame().getTextureRef(),1);
+//	shader.setUniformTexture("tex0",frame.getTextureRef(),0);
+//	shader.setUniformTexture("tex1",source2->getNextVideoFrame().getTextureRef(),1);
+	shader.setUniformTexture("tex0",tex1,0);
+	shader.setUniformTexture("tex1",tex2,1);
 	shader.setUniform1f("dryWetA",dryWetA);
 	shader.setUniform1f("dryWetB",dryWetB);
 	ofRect(0,0,frame.getWidth(),frame.getHeight());
 	shader.end();
 	fbo.end();
-
-	// fast read of fbo result into pixels 
-	ofPixels newPix;
-	fboReader.readToPixels(fbo, newPix);
-	front = VideoFrame::newVideoFrame(newPix);
 	
+	// now we create the new frame from the fbo itself 
+	// dryWet just is for drawing on screen, no need to get back to pixels
+	front = VideoFrame::newVideoFrame(fbo);	
 	ofNotifyEvent(newFrameEvent,front);
 }
 

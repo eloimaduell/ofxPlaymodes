@@ -7,18 +7,23 @@ using namespace ofxPm;
 
 bool drawHelp = false;
 bool runPdAudio = true;
+int	soundStreamDeviceID = 5;
+bool useVRate = true;
 
 //--------------------------------------------------------------
 void testApp::setup(){
 	
 	patchName = "basic.pd";
-	durationInFrames = 400;
-	showGUI = true;
-	fullscreen = false;
+	durationInFrames = 60;
+	grabFPS = 30.0;
+	showGUI = false;
+	fullscreen = true;
+	pmVerbose = false;
 	drawAudioResolution=1;	
-	grabberResolution = ofVec2f(640.0,480.0);
+	grabberResolution = ofVec2f(640,480);
 	grabberAspectRatio = grabberResolution.x / grabberResolution.y;
-	ofBackground(25);
+	ofBackground(15,15,25);
+	//ofSetVerticalSync(true);
 	ofEnableAlphaBlending();
 
 	setupGUI();
@@ -27,9 +32,44 @@ void testApp::setup(){
 	// ofxPlaymodes pipeline
 	/////////////////////////
 	
+	/*
+	[notice] device[8] Matrox HDTV 1080 - Matrox MXO2 - 1080i 50 YUV 8-bit
+	[notice] device[9] Matrox HDTV 1080 - Matrox MXO2 - 1080i 50 YUV 10-bit
+	[notice] device[10] Matrox HDTV 1080 - Matrox MXO2 - 1080i 59.94 YUV 8-bit
+	[notice] device[11] Matrox HDTV 1080 - Matrox MXO2 - 1080i 59.94 YUV 10-bit
+	[notice] device[12] Matrox HDTV 1080 - Matrox MXO2 - 1080PsF 23.98 YUV 8-bit
+	[notice] device[13] Matrox HDTV 1080 - Matrox MXO2 - 1080PsF 23.98 YUV 10-bit
+	[notice] device[14] Matrox HDTV 1080 - Matrox MXO2 - 1080p 23.98 YUV 8-bit
+	[notice] device[15] Matrox HDTV 1080 - Matrox MXO2 - 1080p 23.98 YUV 10-bit
+	[notice] device[16] Matrox HDTV 1080 - Matrox MXO2 - 1080p 25 YUV 8-bit
+	[notice] device[17] Matrox HDTV 1080 - Matrox MXO2 - 1080p 25 YUV 10-bit
+	[notice] device[18] Matrox HDTV 1080 - Matrox MXO2 - 1080p 29.97 YUV 8-bit
+	[notice] device[19] Matrox HDTV 1080 - Matrox MXO2 - 1080p 29.97 YUV 10-bit
+	[notice] device[20] Matrox HDTV 1080 - Matrox MXO2 - 1080p 24 YUV 8-bit
+	[notice] device[21] Matrox HDTV 1080 - Matrox MXO2 - 1080p 24 YUV 10-bit
+	[notice] device[22] Matrox HDTV 1080 - Matrox MXO2 - 1080p 30 YUV 8-bit
+	[notice] device[23] Matrox HDTV 1080 - Matrox MXO2 - 1080p 30 YUV 10-bit
+	[notice] device[24] Matrox HDTV 720 - Matrox MXO2 - 720p 50 YUV 8-bit
+	[notice] device[25] Matrox HDTV 720 - Matrox MXO2 - 720p 50 YUV 10-bit
+	[notice] device[26] Matrox HDTV 720 - Matrox MXO2 - 720p 59.94 YUV 8-bit
+	[notice] device[27] Matrox HDTV 720 - Matrox MXO2 - 720p 59.94 YUV 10-bit
+	[notice] device[28] Matrox HDTV 720 - Matrox MXO2 - 720p 23.98 YUV 8-bit
+	[notice] device[29] Matrox HDTV 720 - Matrox MXO2 - 720p 23.98 YUV 10-bit
+	[notice] device[30] Matrox HDTV 720 - Matrox MXO2 - 720p 25 YUV 8-bit
+	[notice] device[31] Matrox HDTV 720 - Matrox MXO2 - 720p 25 YUV 10-bit
+	[notice] device[32] Matrox HDTV 720 - Matrox MXO2 - 720p 29.97 YUV 8-bit
+	[notice] device[33] Matrox HDTV 720 - Matrox MXO2 - 720p 29.97 YUV 10-bit
+	[notice] device[34] Matrox NTSC - Matrox MXO2 - NTSC YUV 8-bit
+	[notice] device[35] Matrox NTSC - Matrox MXO2 - NTSC YUV 10-bit
+	[notice] device[36] Matrox PAL - Matrox MXO2 - PAL YUV 8-bit
+	[notice] device[37] Matrox PAL - Matrox MXO2 - PAL YUV 10-bit
+	*/
+	
 	// grabber
-	grabber.setDesiredFrameRate(30);
-	grabber.setFps(30);	
+	//grabber.setDeviceID(8);
+	//grabber.listDevices();
+	grabber.setDesiredFrameRate(grabFPS);
+	grabber.setFps(grabFPS);	
 	grabber.initGrabber(grabberResolution.x,grabberResolution.y);
 	
 	// feedback	
@@ -38,28 +78,29 @@ void testApp::setup(){
 	vFeedback.setInputOpacity(opacityIn);
 
 	// vRate
-	vRate.setup(vFeedback,recRate);
+	if(useVRate) vRate.setup(vFeedback,recRate);
 
 	// vBuffer
-	vBuffer.setup(vRate,durationInFrames, true);
+	if (useVRate) vBuffer.setup(vRate,durationInFrames, true);
+	else vBuffer.setup(vFeedback,durationInFrames, true);
 
 	// vHeader
 	vHeader.setup(vBuffer);
 	vHeader.setDelayMs(delay);
 	vHeader.setInMs(in);
 	vHeader.setOutMs(out);
-	vHeader.setLengthMs((float(durationInFrames)/float(recRate))*1000.0);	
+	vHeader.setLengthMs((float(durationInFrames)/float(grabFPS))*1000.0);	
 	vHeader.setWindowPriority("length");
 	
 	// vDryWet
-	//vDryWet.setup(vFeedback ,vHeader);
-	//vDryWet.setDryWet(dryWet);
+	vDryWet.setup(vFeedback ,vHeader);
+	vDryWet.setDryWet(dryWet);
 	
 	// renderers
 	vRendererGrabber.setup(grabber);
 	vRendererBuffer.setup(vBuffer);
 	vRendererHeader.setup(vHeader);
-	vRendererFinal.setup(vHeader);
+	vRendererFinal.setup(vDryWet);
 
 	
 	////////////////////
@@ -100,34 +141,53 @@ void testApp::setup(){
 		pd.addReceiver(*this);
 			
 		// start the sound stream - always do this last in your setup
-		ofSoundStreamSetup(2, 2, this, sampleRate, 64*ticksPerBuffer, 1);
 		
+		//soundStream.listDevices();
+		//soundStream.setDeviceID(soundStreamDeviceID);
+		//soundStream.setup(2,2, sampleRate, 64*ticksPerBuffer,1);
+		ofSoundStreamSetup(2, 2, this, sampleRate, 64*ticksPerBuffer, 2);
+
 		// init pd object
 		pd.sendFloat("sampleRate",float(sampleRate));
-		pd.sendFloat("frameRate",30.0f);
-		pd.sendFloat("bufferSize",sampleRate * (float(durationInFrames) / recRate));
+		pd.sendFloat("frameRate",grabFPS);
+		pd.sendFloat("bufferSize",sampleRate * (float(durationInFrames) / grabFPS));
 		pd.sendFloat("speed",1.0f);
+		pd.sendFloat("grainKeepDuration",0.0f);
 		pd.sendFloat("doppler",0.0f);
 		pd.sendFloat("delay",0.0f);
 		pd.sendFloat("feedback",0.0f);
 		pd.sendFloat("opacityOut",1.0f);
-		pd.sendFloat("in",(float(durationInFrames)/float(recRate))*1000.0);
-		pd.sendFloat("length",(float(durationInFrames)/float(recRate))*1000.0);
+		pd.sendFloat("in",(float(durationInFrames)/float(grabFPS))*1000.0);
 		pd.sendFloat("fullGrain",0.0f);
-		pd.sendFloat("attackGrain",0.0f);
-		pd.sendFloat("decayGrain",0.0f);
+		pd.sendFloat("grainAttack",0.0f);
+		pd.sendFloat("grainDecay",0.0f);
+		pd.sendFloat("loopType",3.0f);
 		pd.sendFloat("dryWet",1.0f);
+		pd.sendFloat("controlTimeStretch",0.0f);
 		pd.sendFloat("opacityEnvToggle",0.0f);
-		pd.sendFloat("out",0.0f);
+		pd.sendFloat("levelEnvMultiplyer",1.0f);
+		pd.sendFloat("levelPlayAudioFrame",0.0f);
+		pd.sendFloat("controlPitchStretch",0.0f);
+
+		//pd.sendFloat("out",0.0f);
+		pd.sendFloat("length",(float(durationInFrames)/float(grabFPS))*1000.0);
 		pd.sendFloat("play",0.0f);
 		pd.sendFloat("rec",1.0f);
 
 		printf("//////////////// pd object \n\n");
-		printf("pd object : bufferSize %f\n",sampleRate * (float(durationInFrames) / recRate));
-		printf("pd object : gran in and length %f\n",(float(durationInFrames)/float(recRate))*1000.0);
+		printf("pd object : samplerate %f || frameRate %f\n",sampleRate, grabFPS);
+		printf("pd object : bufferSize %f\n",sampleRate * (float(durationInFrames) / grabFPS));
+		printf("pd object : gran in and length %f\n",(float(durationInFrames)/float(grabFPS))*1000.0);
 		printf("//////////////// pd object \n\n");
 	}
 		
+	
+	////////////////////
+	// OSC stuff
+	////////////////////
+	oscReceiver.setup(12345,"/pm3");
+	ofAddListener(oscReceiver.newOscMessage,this,&testApp::newOscMessageReceived);
+
 }
 
 
@@ -161,7 +221,7 @@ void testApp::draw(){
 
 		ofPushMatrix();
 		ofTranslate(320.0+resizeFactorX,20.0f);
-		ofSetColor(opacityOut*255);
+		ofSetColor(vHeader.getOpacity());
 		vRendererFinal.draw(0,0,resizeFactorX*2.0f,resizeFactorY*2.0f);
 		ofPopMatrix();
 			
@@ -171,6 +231,7 @@ void testApp::draw(){
 		ofBackground(0);
 		ofSetColor(255);
 		float screenAspectRatio = float(ofGetWidth()) / float(ofGetHeight());
+		ofSetColor(vHeader.getOpacity());
 		if (screenAspectRatio>grabberAspectRatio) 
 		{
 			vRendererFinal.draw((ofGetWidth()-ofGetHeight()*grabberAspectRatio)/2,0,ofGetHeight()*grabberAspectRatio,ofGetHeight());
@@ -185,9 +246,11 @@ void testApp::draw(){
 		vBuffer.draw();
 		vHeader.draw();
 	}
+	
+	if(drawAudioToggle && runPdAudio) drawPdBuffer();
+
 	if(showGUI)
 	{
-		if(drawAudioToggle && runPdAudio) drawPdBuffer();
 		controlPanel.draw();
 		configPanel.draw();
 		levelsPanel.draw();
@@ -206,7 +269,7 @@ void testApp::draw(){
 	ofSetColor(0,255,0);
 	ofDrawBitmapString(patchName + "  ||  " + ofToString(int(ofGetFrameRate()))
 					   + " fps "
-					   + " || recRate " + ofToString(vBuffer.getRealFPS()) + " fps"
+					   + " || buffer real fps " + ofToString(vBuffer.getRealFPS()) + " fps"
 					   ,20,ofGetHeight()-35);
 	
 }
@@ -222,6 +285,13 @@ void testApp::keyPressed(int key){
 	{
 		fullscreen=!fullscreen;
 		ofToggleFullscreen();
+		if(!fullscreen) showGUI=true;
+		else showGUI=false;
+	}
+	else if(key=='F') 
+	{
+		fullscreen=!fullscreen;
+		//ofToggleFullscreen();
 		if(!fullscreen) showGUI=true;
 		else showGUI=false;
 	}
@@ -339,6 +409,11 @@ void testApp::keyPressed(int key){
 		loadOrSave = 2;
 		presetNum = "0"; 
 	}
+	else if (key=='-')
+	{
+		pmVerbose=!pmVerbose;
+	}
+	
 	
 	// load or save preset 
 	if (loadOrSave==1)
@@ -488,7 +563,7 @@ void testApp::dragEvent(ofDragInfo dragInfo){
 	grabberResolution = ofVec2f(VideoSource(videoFileGrabber).getWidth(),VideoSource::videoFileGrabber.getHeight());
 	grabberAspectRatio = grabberResolution.x / grabberResolution.y;
 */			
-	vRate.removeListener();
+	//?vRate.removeListener();
 	vFeedback.removeListener();
 	vDryWet.removeListener();
 	
@@ -591,11 +666,12 @@ void testApp::audioIn(float *input, int bufferSize, int numChannels) {
 //--------------------------------------------------------------
 void testApp::receiveFloat(const std::string& dest, float value)
 {	
+	if(pmVerbose)printf(">receive float from Pd %s %f\n",dest.c_str(),value);
 	float dryWetAlpha = 0.09;
 	if(dest=="delayDoppler") 
 	{
-		vHeader.setDelayMs(value/(sampleRate/1000.0f));
-		printf("received from pd> delayDoppler!!\n");		
+		//vHeader.setDelayMs(value/(sampleRate/1000.0f));
+		//if(pmVerbose)printf("received from pd> delayDoppler!!\n");		
 	}
 	else if(dest=="levelEnvGrain") 
 	{
@@ -603,12 +679,14 @@ void testApp::receiveFloat(const std::string& dest, float value)
 		//if(opacityEnvToggle) dryWet=((1.0f-dryWetAlpha)*dryWet)+(dryWetAlpha*value*10.0);
 		//if(dryWet>1.0) dryWet=1.0;
 		opacityOut=value;
-		printf("received from pd> levelEnvGrain!!\n");		
+		if(pmVerbose)printf("received from pd> levelEnvGrain!!\n");		
 	}
-//	else if(dest=="levelEnvFollowIn")
-		else if(dest=="opacityEnv")
+	else if(dest=="levelEnvFollowIn")
 	{
+		
+		if(pmVerbose)printf("received from pd> levelEnvFollowIn :: %f!!\n",value);		
 		opacityIn=value;
+		//opacityInChanged(value);
 	}
 	else if(dest=="index")
 	{
@@ -618,7 +696,7 @@ void testApp::receiveFloat(const std::string& dest, float value)
 	{
 		//vHeader.setDelayMs(value/(sampleRate/1000.0f));
 		vHeader.setDelayMs(value);
-		printf("received from pd > delayPlay %f\n",value/(sampleRate/1000.0f));
+		if(pmVerbose)printf("received from pd > delayPlay %f\n",value/(sampleRate/1000.0f));
 	}
 }
 
@@ -706,14 +784,14 @@ void testApp::inChanged(float &f)
 {
 	vHeader.setInMs(f);
 	pd.sendFloat("in",f);
-	printf("> in changed to %f\n",f);
+	if(pmVerbose)printf("> in changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::outChanged(float &f)
 {
 	vHeader.setOutMs(f);
 	pd.sendFloat("out",f);
-	printf("> out changed to %f\n",f);
+	if(pmVerbose)printf("> out changed to %f\n",f);
 
 }
 //--------------------------------------------------------------
@@ -721,13 +799,14 @@ void testApp::lengthChanged(float &f)
 {
 	vHeader.setLengthMs(f);
 	pd.sendFloat("length",f);
-	printf("> length changed to %f\n",f);
+	if(pmVerbose)printf("> length changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::delayChanged(float &f)
 {
+	if(pmVerbose)printf("> delay changed to %f\n",f);
+	//vHeader.setDelayMs(f);
 	pd.sendFloat("delay",f);
-	printf("> delay changed to %f\n",f);
 	
 }
 //--------------------------------------------------------------
@@ -735,22 +814,22 @@ void testApp::speedChanged(float &f)
 {
 	vHeader.setSpeed(f);
 	pd.sendFloat("speed",f);
- 	printf("> speed changed to %f\n",f);
+ 	if(pmVerbose)printf("> speed changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::feedBackChanged(float &f)
 {
 	pd.sendFloat("feedBack",f);
 	//vBuffer.setFeedBack(f);
-	vFeedback.setFeedback(feedBack);
-	printf("> feedback changed to %f\n",f);
+	vFeedback.setFeedback(f);
+	if(pmVerbose)printf("> feedback changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::opacityOutChanged(float &f)
 {
 	vHeader.setOpacity(int(f*255.0));
 	pd.sendFloat("opacityOut",f);
-	printf("> opacity out changed to %f\n",f);
+	if(pmVerbose) printf("> opacity out changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::opacityInChanged(float &f)
@@ -761,9 +840,9 @@ void testApp::opacityInChanged(float &f)
 //	}
 //	else {
 //		vHeader.setOpacity(int(f*255.0));
-		printf("> opacity in changed to %f\n",f);
+	if(pmVerbose)printf("> opacity in changed to %f\n",f);
 //	}
-	vFeedback.setInputOpacity(opacityIn);
+	vFeedback.setInputOpacity(f);
 
 }
 //--------------------------------------------------------------
@@ -772,7 +851,7 @@ void testApp::attackGrainChanged(float &f)
 	pd.sendFloat("grainAttack",f);
 	vHeader.setAttack(f);
 
-	printf(">attack changed to %f\n",f);
+	if(pmVerbose)printf(">attack changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::decayGrainChanged(float &f)
@@ -780,14 +859,29 @@ void testApp::decayGrainChanged(float &f)
 	pd.sendFloat("grainDecay",f);
 	vHeader.setDecay(f);
 	
-	printf(">decay changed to %f\n",f);
+	if(pmVerbose)printf(">decay changed to %f\n",f);
 }
 //--------------------------------------------------------------
 void testApp::dryWetChanged(float &f)
 {
 	pd.sendFloat("dryWet",f);
 	vDryWet.setDryWet(dryWet);
-	printf(">dryWet changed to %f\n",f);
+	if(pmVerbose)printf(">dryWet changed to %f\n",f);
+}
+
+//--------------------------------------------------------------
+void testApp::levelEnvMultiplyerChanged(float &f)
+{
+	pd.sendFloat("levelEnvMultiplyer",f);
+	if(pmVerbose)printf(">levelEnvMultiplyer changed to %f\n",f);
+}
+
+
+//--------------------------------------------------------------
+void testApp::controlPitchStretchChanged(float &f)
+{
+	pd.sendFloat("controlPitchStretch",f);
+	if(pmVerbose)printf(">controlPitchStretch changed to %f\n",f);
 }
 
 
@@ -796,28 +890,28 @@ void testApp::dryWetChanged(float &f)
 //--------------------------------------------------------------
 void testApp::recRateChanged(int &i)
 {
-	vRate.setFps(i);
-	printf(">recRate changed to %d\n",i);
+	//? vRate.setFps(i);
+	if(pmVerbose)printf(">recRate changed to %d\n",i);
 
 }
 //--------------------------------------------------------------
 void testApp::avSyncOffsetChanged(int &i)
 {
 	vHeader.setOffsetInFrames(i);
-	printf(">avSync offset changed to %d\n",i);
+	if(pmVerbose)printf(">avSync offset changed to %d\n",i);
 }
 //--------------------------------------------------------------
 void testApp::scratchFactorChanged(int &i)
 {
 	pd.sendFloat("doppler",i);
-	printf(">scratch factor changed to %d\n",i);
+	if(pmVerbose)printf(">scratch factor changed to %d\n",i);
 }
 //--------------------------------------------------------------
 void testApp::loopTypeChanged(int &i)
 {
 	pd.sendFloat("loopType",i);
 	vHeader.setLoopMode(i);
-	printf(">loopTypeChanged to %d\n",i);
+	if(pmVerbose)printf(">loopTypeChanged to %d\n",i);
 }
 
 //--------------------------------------------------------------
@@ -829,13 +923,13 @@ void testApp::recChanged(bool &b)
 	{
 		vBuffer.stop();
 		pd.sendFloat("rec",0.0);
-		printf("> rec stop 0.0\n");
+		if(pmVerbose)printf("> rec stop 0.0\n");
 	}
 	else
 	{
 		vBuffer.resume();
 		pd.sendFloat("rec",1.0);
-		printf("> rec play changed to 1.0\n");
+		if(pmVerbose)printf("> rec play changed to 1.0\n");
 	}
 	
 	
@@ -847,7 +941,7 @@ void testApp::playChanged(bool &b)
 		vHeader.setPlaying(true);
 		vHeader.setDriveMode(1);
 		pd.sendFloat("play",1.0);
-		printf("> play changed to 1.0\n");
+		if(pmVerbose)printf("> play changed to 1.0\n");
 		
 	}
 	else 
@@ -857,7 +951,7 @@ void testApp::playChanged(bool &b)
 		vHeader.setDriveMode(0);
 
 		pd.sendFloat("play",0.0);
-		printf("> play changed to 0.0\n");
+		if(pmVerbose)printf("> play changed to 0.0\n");
 	}	
 }
 //--------------------------------------------------------------
@@ -865,13 +959,17 @@ void testApp::drawAudioChanged(bool &b)
 {
 }
 //--------------------------------------------------------------
-void testApp::drawBufferChanged(bool &b)
+void testApp::verboseToggleChanged(bool &b)
 {
+	pmVerbose=b;
 }
+
+
 //--------------------------------------------------------------
 void testApp::keepDurationToggleChanged(bool &b)
 {
-	pd.sendFloat("keepDuration",0.0f);
+	if(b) pd.sendFloat("grainKeepDuration",1.0f);
+	else pd.sendFloat("grainKeepDuration",0.0f);
 }
 
 //--------------------------------------------------------------
@@ -880,28 +978,32 @@ void testApp::fullGrainChanged(bool &b)
 	if(b)
 	{
 		pd.sendFloat("fullGrain",1.0f);
-		printf("> full grain changed to 1.0\n");
+		if(pmVerbose)printf("> full grain changed to 1.0\n");
 	}
 	else 
 	{
 		pd.sendFloat("fullGrain",0.0f);
-		printf("> full grain changed to 0.0\n");
+		if(pmVerbose)printf("> full grain changed to 0.0\n");
 	}
+}
+//-------------------------------------------------------------
+void testApp::drawBufferChanged(bool &b)
+{
+
 }
 //-------------------------------------------------------------
 void testApp::opacityEnvToggleChanged(bool &b)
 {
 	
-	if(!b)
+	if(b)
 	{
 		pd.sendFloat("opacityEnvToggle",1.0f);
-		printf("> oppacity Env Toggle changed to 1.0\n");
+		if(pmVerbose)printf("> oppacity Env Toggle changed to 1.0\n");
 	}
 	else 
 	{
 		pd.sendFloat("opacityEnvToggle",0.0f);
-		//pd.sendFloat("opacityOut",opacityOut);
-		printf("> oppacity Env Toggle changed to 0.0\n");
+		if(pmVerbose)printf("> oppacity Env Toggle changed to 0.0\n");
 	}
 	
 }
@@ -913,7 +1015,7 @@ void testApp::grabberSettingsToggleChanged(bool &b)
 	{
 		grabber.videoSettings();
 		b = grabberSettingsToggle =false;
-		printf("> grabber video settings \n");
+		if(pmVerbose)printf("> grabber video settings \n");
 	}
 	
 
@@ -922,16 +1024,16 @@ void testApp::grabberSettingsToggleChanged(bool &b)
 //-------------------------------------------------------------
 void testApp::playAudioFrameToggleChanged(bool &b)
 {
-	printf("> play audio frame changed \n");
+	if(pmVerbose)printf("> play audio frame changed \n");
 	
-	if (b) pd.sendFloat("levelsPlayAudioFrame",1.0f);
-	else pd.sendFloat("levelsPlayAudioFrame",0.0f);
+	if (b) pd.sendFloat("levelPlayAudioFrame",1.0f);
+	else pd.sendFloat("levelPlayAudioFrame",0.0f);
 	
 }
 //-------------------------------------------------------------
 void testApp::timeStretchToggleChanged(bool &b)
 {
-	printf("> time stretch changed \n");
+	if(pmVerbose)printf("> time stretch changed \n");
 	
 	if (b) pd.sendFloat("controlTimeStretch",1.0f);
 	else pd.sendFloat("controlTimeStretch",0.0f);
@@ -946,11 +1048,11 @@ void testApp::setupGUI()
 	////////////////////
 	// ofxGUI
 	////////////////////
-	controlPanel.setup("CONTROL",		"./defaultSettings/controlSettings.xml",10,10);
-	configPanel.setup("CONFIG",			"./defaultSettings/configSettings.xml", 300,20+240);
-	levelsPanel.setup("LEVELS",			"./defaultSettings/levelsSettings.xml", 300, 20+240+120);
-	grainPanel.setup("GRAIN",			"./defaultSettings/grainSettings.xml", 10, 20+240+120);
-	envFollowPanel.setup("ENV_FOLLOW",	"./defaultSettings/envFollowSettings.xml", 10, 20+140+120);	
+	configPanel.setup("CONFIG",			"./defaultSettings/configSettings.xml", 10,10);
+	controlPanel.setup("CONTROL",		"./defaultSettings/controlSettings.xml",10,160);
+	levelsPanel.setup("LEVELS",			"./defaultSettings/levelsSettings.xml", 10, 350);
+	envFollowPanel.setup("ENV_FOLLOW",	"./defaultSettings/envFollowSettings.xml", 10, 490);	
+	grainPanel.setup("GRAIN",			"./defaultSettings/grainSettings.xml", 10, 555);
 
 	controlPanel.loadFromFile("./defaultSettings/controlSettings.xml");
 	configPanel.loadFromFile("./defaultSettings/configSettings.xml");
@@ -958,35 +1060,37 @@ void testApp::setupGUI()
 	grainPanel.loadFromFile("./defaultSettings/grainSettings.xml");
 	envFollowPanel.loadFromFile("./defaultSettings/envFollowSettings.xml");
 
+	configPanel.add(recRate.setup				("rec at fps",int(grabFPS),15,60));
+	configPanel.add(avSyncOffset.setup			("av-sync offset",0,-50,50));
+	configPanel.add(drawAudioToggle.setup		("draw audio",true));	
+	configPanel.add(drawBufferToggle.setup		("draw buffer",true));
+	configPanel.add(grabberSettingsToggle.setup	("grabber settings",false));		
+	configPanel.add(verbose.setup				("print console",false));		
 	controlPanel.add(presetLabel.setup			(ofToString("presetLabel"),patchName + ofToString(" :: none")));
-	controlPanel.add(rec.setup					("rec?",true));
-	controlPanel.add(play.setup					("play?",false));
+	controlPanel.add(rec.setup					("rec",true));
+	controlPanel.add(play.setup					("play",false));
 	controlPanel.add(speed.setup				("speed",1.0,-4.0,4.0));
 	controlPanel.add(delay.setup				("delay ms",0.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
 	controlPanel.add(scratchFactor.setup		("scratch factor",0.0,0.0,4000.0));
-	controlPanel.add(timeStretchToggle.setup	("time stretch?",false));
+	controlPanel.add(timeStretchToggle.setup	("time stretch",false));
+	controlPanel.add(controlPitchStretch.setup	("pitch on stretch",1.0,-36.0,36.0));
 	
-	envFollowPanel.add(opacityEnvToggle.setup	("opacity env?",false));
-	
-	configPanel.add(recRate.setup				("rec at fps",30,1,200));
-	configPanel.add(avSyncOffset.setup			("av-sync offset",0,-50,50));
-	configPanel.add(drawAudioToggle.setup		("draw audio?",true));	
-	configPanel.add(drawBufferToggle.setup		("draw buffer?",true));
-	configPanel.add(grabberSettingsToggle.setup	("grabber settings",false));		
-	
+	envFollowPanel.add(opacityEnvToggle.setup	("opacity env",false));
+	envFollowPanel.add(levelEnvMultiplyer.setup	("mic sensitivity",1.0,0.0,20.0));
+
 	levelsPanel.add(opacityIn.setup				("level in",1.0,0.0,1.0));
 	levelsPanel.add(opacityOut.setup			("level out",1.0,0.0,1.0));
 	levelsPanel.add(feedBack.setup				("feedBack",0.0,0.0,1.0));
 	levelsPanel.add(dryWet.setup				("dry / wet",1.0,0.0,1.0));
-	levelsPanel.add(playAudioFrameToggle.setup	("play audio frame?",false));	
+	levelsPanel.add(playAudioFrameToggle.setup	("play audio frame",false));	
 	
 	grainPanel.add(length.setup					("length ms",(float(durationInFrames)/float(recRate))*1000.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
 	grainPanel.add(in.setup						("in ms",(float(durationInFrames)/float(recRate))*1000.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
 	grainPanel.add(out.setup					("out ms",0.0,0.0,(float(durationInFrames)/float(recRate))*1000.0));
 	grainPanel.add(attackGrain.setup			("attack grain",0.0,0.0,2000.0));
 	grainPanel.add(decayGrain.setup				("decay grain",0.0,0.0,2000.0));
-	grainPanel.add(fullGrain.setup				("play full grain?",false));
-	grainPanel.add(keepDurationToggle.setup		("keep duration?",false));
+	grainPanel.add(fullGrain.setup				("play full grain",false));
+	grainPanel.add(keepDurationToggle.setup		("keep duration",false));
 	grainPanel.add(loopType.setup				("loopType",3,1,3));
 	
 	////////////////////
@@ -995,11 +1099,14 @@ void testApp::setupGUI()
 	controlPanel.getFloatSlider("delay ms").addListener(this,&testApp::delayChanged);
 	controlPanel.getFloatSlider("speed").addListener(this,&testApp::speedChanged);
 	controlPanel.getIntSlider("scratch factor").addListener(this,&testApp::scratchFactorChanged);	
-	controlPanel.getToggle("rec?").addListener(this,&testApp::recChanged);	
-	controlPanel.getToggle("play?").addListener(this,&testApp::playChanged);	
-	controlPanel.getToggle("time stretch?").addListener(this,&testApp::timeStretchToggleChanged);	
+	controlPanel.getToggle("rec").addListener(this,&testApp::recChanged);	
+	controlPanel.getToggle("play").addListener(this,&testApp::playChanged);	
+	controlPanel.getToggle("time stretch").addListener(this,&testApp::timeStretchToggleChanged);	
+	controlPanel.getFloatSlider("pitch on stretch").addListener(this,&testApp::controlPitchStretchChanged);	
 	
-	envFollowPanel.getToggle("opacity env?").addListener(this,&testApp::opacityEnvToggleChanged);	
+
+	envFollowPanel.getToggle("opacity env").addListener(this,&testApp::opacityEnvToggleChanged);	
+	envFollowPanel.getFloatSlider("mic sensitivity").addListener(this,&testApp::levelEnvMultiplyerChanged);
 	
 	grainPanel.getFloatSlider("in ms").addListener(this,&testApp::inChanged);
 	grainPanel.getFloatSlider("out ms").addListener(this,&testApp::outChanged);
@@ -1007,19 +1114,109 @@ void testApp::setupGUI()
 	grainPanel.getFloatSlider("attack grain").addListener(this,&testApp::attackGrainChanged);
 	grainPanel.getFloatSlider("decay grain").addListener(this,&testApp::decayGrainChanged);
 	grainPanel.getIntSlider("loopType").addListener(this,&testApp::loopTypeChanged);	
-	grainPanel.getToggle("play full grain?").addListener(this,&testApp::fullGrainChanged);	
-	grainPanel.getToggle("keep duration?").addListener(this,&testApp::keepDurationToggleChanged);	
+	grainPanel.getToggle("play full grain").addListener(this,&testApp::fullGrainChanged);	
+	grainPanel.getToggle("keep duration").addListener(this,&testApp::keepDurationToggleChanged);	
 	
 	levelsPanel.getFloatSlider("feedBack").addListener(this,&testApp::feedBackChanged);
 	levelsPanel.getFloatSlider("level in").addListener(this,&testApp::opacityInChanged);
 	levelsPanel.getFloatSlider("level out").addListener(this,&testApp::opacityOutChanged);
 	levelsPanel.getFloatSlider("dry / wet").addListener(this,&testApp::dryWetChanged);
-	levelsPanel.getToggle("play audio frame?").addListener(this,&testApp::playAudioFrameToggleChanged);
+	levelsPanel.getToggle("play audio frame").addListener(this,&testApp::playAudioFrameToggleChanged);
 	
 	configPanel.getIntSlider("rec at fps").addListener(this,&testApp::recRateChanged);
 	configPanel.getIntSlider("av-sync offset").addListener(this,&testApp::avSyncOffsetChanged);
-	configPanel.getToggle("draw audio?").addListener(this,&testApp::drawAudioChanged);	
-	configPanel.getToggle("draw buffer?").addListener(this,&testApp::drawBufferChanged);	
+	configPanel.getToggle("draw audio").addListener(this,&testApp::drawAudioChanged);	
+	configPanel.getToggle("draw buffer").addListener(this,&testApp::drawBufferChanged);	
 	configPanel.getToggle("grabber settings").addListener(this,&testApp::grabberSettingsToggleChanged);	
+	configPanel.getToggle("print console").addListener(this,&testApp::verboseToggleChanged);	
+	
+	
+}
+
+//--------------------------------------------------------------
+void testApp::newOscMessageReceived(pmOscMessage &mess)
+{
+	if(pmVerbose)printf("testApp:: OSC in  :: %s : %f \n",mess.address.c_str(),mess.value);
+	
+	// FLOAT 
+	if(mess.address=="/pm3/header/delay")
+	{
+		delayChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/header/in")
+	{
+		inChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/header/length")
+	{
+		lengthChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/header/speed")
+	{
+		speedChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/master/out")
+	{
+		opacityOutChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/master/in")
+	{
+		opacityInChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/buffer/feedback")
+	{
+		feedBackChanged(mess.value);
+	}
+	else if(mess.address=="/pm3/buffer/scratchDecayTime")
+	{
+		int i = int(mess.value);
+		scratchFactorChanged(i);
+	}
+	
+	// BOOLEANS 
+	else if(mess.address=="/pm3/header/play")
+	{
+		bool b;
+		if(mess.value==1.0){
+			b=true;
+		}
+		else {
+			b=false;
+		}
+		playChanged(b);
+	}
+	else if(mess.address=="/pm3/header/rec")
+	{
+		bool b;
+		if(mess.value==1.0){
+			b=true;
+		}
+		else {
+			b=false;
+		}
+		recChanged(b);
+	}
+	else if(mess.address=="/pm3/header/enableTimeStretch")
+	{
+		bool b;
+		if(mess.value==1.0){
+			b=true;
+		}
+		else {
+			b=false;
+		}
+		timeStretchToggleChanged(b);
+	}
+	else if(mess.address=="/pm3/header/keepWholeGrain")
+	{
+		bool b;
+		if(mess.value==1.0){
+			b=true;
+		}
+		else {
+			b=false;
+		}
+		fullGrainChanged(b);
+	}
 	
 }
